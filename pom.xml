@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,6 +14,22 @@
     <prerequisites>
         <maven>3.1</maven>
     </prerequisites>
+    <description>A maven plugin for apikana.</description>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Stefan Niederhauser</name>
+            <email>ich@nidi.guru</email>
+            <organization>github</organization>
+            <organizationUrl>https://github.com/nidi3</organizationUrl>
+        </developer>
+    </developers>
 
     <build>
         <pluginManagement>
@@ -162,34 +179,34 @@
         </profile>
 
         <!--<profile>-->
-            <!--<id>site-deploy</id>-->
-            <!--<activation>-->
-                <!--<property>-->
-                    <!--<name>performRelease</name>-->
-                <!--</property>-->
-            <!--</activation>-->
-            <!--<build>-->
-                <!--<plugins>-->
-                    <!--<plugin>-->
-                        <!--<groupId>com.github.github</groupId>-->
-                        <!--<artifactId>site-maven-plugin</artifactId>-->
-                        <!--<executions>-->
-                            <!--<execution>-->
-                                <!--<goals>-->
-                                    <!--<goal>site</goal>-->
-                                <!--</goals>-->
-                                <!--<phase>site-deploy</phase>-->
-                                <!--<configuration>-->
-                                    <!--<server>github</server>-->
-                                    <!--<message>Building site</message>-->
-                                    <!--<path>site</path>-->
-                                    <!--<merge>true</merge>-->
-                                <!--</configuration>-->
-                            <!--</execution>-->
-                        <!--</executions>-->
-                    <!--</plugin>-->
-                <!--</plugins>-->
-            <!--</build>-->
+        <!--<id>site-deploy</id>-->
+        <!--<activation>-->
+        <!--<property>-->
+        <!--<name>performRelease</name>-->
+        <!--</property>-->
+        <!--</activation>-->
+        <!--<build>-->
+        <!--<plugins>-->
+        <!--<plugin>-->
+        <!--<groupId>com.github.github</groupId>-->
+        <!--<artifactId>site-maven-plugin</artifactId>-->
+        <!--<executions>-->
+        <!--<execution>-->
+        <!--<goals>-->
+        <!--<goal>site</goal>-->
+        <!--</goals>-->
+        <!--<phase>site-deploy</phase>-->
+        <!--<configuration>-->
+        <!--<server>github</server>-->
+        <!--<message>Building site</message>-->
+        <!--<path>site</path>-->
+        <!--<merge>true</merge>-->
+        <!--</configuration>-->
+        <!--</execution>-->
+        <!--</executions>-->
+        <!--</plugin>-->
+        <!--</plugins>-->
+        <!--</build>-->
         <!--</profile>-->
     </profiles>
 
