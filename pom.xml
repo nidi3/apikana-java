@@ -161,36 +161,36 @@
             </build>
         </profile>
 
-        <profile>
-            <id>site-deploy</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.github.github</groupId>
-                        <artifactId>site-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>site</goal>
-                                </goals>
-                                <phase>site-deploy</phase>
-                                <configuration>
-                                    <server>github</server>
-                                    <message>Building site</message>
-                                    <path>site</path>
-                                    <merge>true</merge>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+        <!--<profile>-->
+            <!--<id>site-deploy</id>-->
+            <!--<activation>-->
+                <!--<property>-->
+                    <!--<name>performRelease</name>-->
+                <!--</property>-->
+            <!--</activation>-->
+            <!--<build>-->
+                <!--<plugins>-->
+                    <!--<plugin>-->
+                        <!--<groupId>com.github.github</groupId>-->
+                        <!--<artifactId>site-maven-plugin</artifactId>-->
+                        <!--<executions>-->
+                            <!--<execution>-->
+                                <!--<goals>-->
+                                    <!--<goal>site</goal>-->
+                                <!--</goals>-->
+                                <!--<phase>site-deploy</phase>-->
+                                <!--<configuration>-->
+                                    <!--<server>github</server>-->
+                                    <!--<message>Building site</message>-->
+                                    <!--<path>site</path>-->
+                                    <!--<merge>true</merge>-->
+                                <!--</configuration>-->
+                            <!--</execution>-->
+                        <!--</executions>-->
+                    <!--</plugin>-->
+                <!--</plugins>-->
+            <!--</build>-->
+        <!--</profile>-->
     </profiles>
 
     <dependencies>
