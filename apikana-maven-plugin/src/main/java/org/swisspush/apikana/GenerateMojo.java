@@ -119,11 +119,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 return;
             }
         }
-//                TODO no path, but just install!!
-        executeFrontend("npm", configuration(
-                element("arguments", "install c:/work/projects/apikana-nidi/npm/apikana-" + Version.APIKANA + ".tgz")
-        ));
-//        executeFrontend("npm", configuration(element("arguments", "install")));
+        executeFrontend("npm", configuration(element("arguments", "install")));
     }
 
     private void runApikana() throws MojoExecutionException {
