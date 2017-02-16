@@ -69,6 +69,7 @@
                         <configuration>
                             <autoVersionSubmodules>true</autoVersionSubmodules>
                             <checkModificationExcludeList>workspace.xml</checkModificationExcludeList>
+                            <releaseProfiles>do-release</releaseProfiles>
                         </configuration>
                     </plugin>
                     <plugin>
