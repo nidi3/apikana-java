@@ -86,6 +86,12 @@
             <url>http://artifactory.pnet.ch/artifactory/libs-release-local</url>
             <uniqueVersion>true</uniqueVersion>
         </repository>
+        <snapshotRepository>
+            <id>artifactory-snapshots</id>
+            <name>artifactory.pnet.ch-snapshots</name>
+            <url>http://artifactory.pnet.ch/artifactory/libs-snapshot-local</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
     </distributionManagement>
 
     <reporting>
