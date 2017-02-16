@@ -82,6 +82,25 @@
                     </plugin>
                 </plugins>
             </build>
+
+            <distributionManagement>
+                <repository>
+                    <id>dummy-releases</id>
+                    <name>dummy-releases</name>
+                    <url>file:target/dummy-releases</url>
+                </repository>
+                <snapshotRepository>
+                    <id>dummy-snapshots</id>
+                    <name>dummy-snapshots</name>
+                    <url>file:target/dummy-snapshots</url>
+                </snapshotRepository>
+                <site>
+                    <id>dummy-site</id>
+                    <name>dummy-site</name>
+                    <url>file:target/site-deploy</url>
+                </site>
+            </distributionManagement>
+
         </profile>
     </profiles>
 
