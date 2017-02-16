@@ -15,6 +15,7 @@
         <maven>3.1</maven>
     </prerequisites>
     <description>A maven plugin for apikana.</description>
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -115,33 +116,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <scm>
-        <connection>scm:git:https://github.com/nidi3/apikana-maven-plugin.git</connection>
-        <developerConnection>scm:git:https://github.com/nidi3/apikana-maven-plugin.git</developerConnection>
-        <url>https://github.com/nidi3/apikana-maven-plugin</url>
-        <tag>HEAD</tag>
-    </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>artifactory-releases</id>
-            <name>artifactory.pnet.ch-releases</name>
-            <url>http://artifactory.pnet.ch/artifactory/libs-release-local</url>
-            <uniqueVersion>true</uniqueVersion>
-        </repository>
-        <snapshotRepository>
-            <id>artifactory-snapshots</id>
-            <name>artifactory.pnet.ch-snapshots</name>
-            <url>http://artifactory.pnet.ch/artifactory/libs-snapshot-local</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
-        <site>
-            <id>doc</id>
-            <name>doc</name>
-            <url>file:target/site-deploy</url>
-        </site>
-    </distributionManagement>
 
     <reporting>
         <plugins>
@@ -249,4 +223,32 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <scm>
+        <connection>scm:git:https://github.com/nidi3/apikana-maven-plugin.git</connection>
+        <developerConnection>scm:git:https://github.com/nidi3/apikana-maven-plugin.git</developerConnection>
+        <url>https://github.com/nidi3/apikana-maven-plugin</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>artifactory-releases</id>
+            <name>artifactory.pnet.ch-releases</name>
+            <url>http://artifactory.pnet.ch/artifactory/libs-release-local</url>
+            <uniqueVersion>true</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>artifactory-snapshots</id>
+            <name>artifactory.pnet.ch-snapshots</name>
+            <url>http://artifactory.pnet.ch/artifactory/libs-snapshot-local</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+        <site>
+            <id>doc</id>
+            <name>doc</name>
+            <url>file:target/site-deploy</url>
+        </site>
+    </distributionManagement>
+
 </project>
