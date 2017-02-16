@@ -191,7 +191,7 @@
                 <!--</plugins>-->
             <!--</build>-->
         <!--</profile>-->
-    <!--</profiles>-->
+    </profiles>
 
     <dependencies>
         <dependency>
