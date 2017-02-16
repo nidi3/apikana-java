@@ -51,10 +51,6 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
-                </plugin>
-                <plugin>
                     <groupId>com.github.github</groupId>
                     <artifactId>site-maven-plugin</artifactId>
                     <version>0.12</version>
@@ -155,25 +151,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <distributionManagement>
-        <!--<repository>-->
-            <!--<id>artifactory-releases</id>-->
-            <!--<name>artifactory.pnet.ch-releases</name>-->
-            <!--<url>http://artifactory.pnet.ch/artifactory/libs-release-local</url>-->
-            <!--<uniqueVersion>true</uniqueVersion>-->
-        <!--</repository>-->
-        <!--<snapshotRepository>-->
-            <!--<id>artifactory-snapshots</id>-->
-            <!--<name>artifactory.pnet.ch-snapshots</name>-->
-            <!--<url>http://artifactory.pnet.ch/artifactory/libs-snapshot-local</url>-->
-            <!--<uniqueVersion>false</uniqueVersion>-->
-        <!--</snapshotRepository>-->
-        <site>
-            <id>doc</id>
-            <name>doc</name>
-            <url>file:target/site-deploy</url>
-        </site>
-    </distributionManagement>
 
 </project>
