@@ -79,6 +79,15 @@
         <url>https://github.com/nidi3/apikana-maven-plugin.git</url>
     </scm>
 
+    <distributionManagement>
+        <repository>
+            <id>artifactory-releases</id>
+            <name>artifactory.pnet.ch-releases</name>
+            <url>http://artifactory.pnet.ch/artifactory/libs-release-local</url>
+            <uniqueVersion>true</uniqueVersion>
+        </repository>
+    </distributionManagement>
+
     <reporting>
         <plugins>
             <plugin>
