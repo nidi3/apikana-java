@@ -14,10 +14,6 @@
     <packaging>pom</packaging>
     <description>A parent pom for APIs with apikana.</description>
 
-    <properties>
-        <apikana.java-package>apikana.pack</apikana.java-package>
-    </properties>
-
     <build>
         <pluginManagement>
             <plugins>
@@ -46,7 +42,7 @@
                 <plugin>
                     <groupId>org.swisspush.maven.plugins</groupId>
                     <artifactId>apikana-maven-plugin</artifactId>
-                    <version>0.1.14</version>
+                    <version>0.1.17-SNAPSHOT</version>
                     <executions>
                         <execution>
                             <goals>

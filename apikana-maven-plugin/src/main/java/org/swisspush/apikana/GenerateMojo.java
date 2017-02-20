@@ -61,7 +61,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
     /**
      * The java package that should be used.
      */
-    @Parameter(defaultValue = "apikana.sample", property = "apikana.java-package")
+    @Parameter(property = "apikana.java-package")
     private String javaPackage;
 
     /**
@@ -127,7 +127,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 relative(working(""), file(input)),
                 relative(working(""), file(output)),
                 global ? "" : "--",
-                "--javaPackage=" + javaPackage,
+                "--javaPackage=" + javaPackage(),
                 "--deploy=" + deploy,
                 "--config=properties.json",
                 "--dependencyPath=" + relative(working(""), apiDependencies("")));
@@ -144,6 +144,16 @@ public class GenerateMojo extends AbstractGenerateMojo {
         } else {
             executeFrontend("npm", configuration(element("arguments", "run " + cmdLine)));
         }
+    }
+
+    private String javaPackage() {
+        String artifactId = mavenProject.getArtifactId();
+        int point = artifactId.indexOf('-');
+        if (point > 0) {
+            artifactId = artifactId.substring(point + 1);
+        }
+        artifactId = artifactId.replace("-", ".");
+        return javaPackage != null ? javaPackage : (mavenProject.getGroupId() + "." + artifactId);
     }
 
 }
