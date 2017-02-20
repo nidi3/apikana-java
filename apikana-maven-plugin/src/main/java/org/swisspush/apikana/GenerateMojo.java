@@ -7,6 +7,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,6 +90,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
                     generatePackageJson(Version.APIKANA);
                     installApikana();
                 }
+                deleteGeneratedClasses();
                 runApikana();
                 mavenProject.addCompileSourceRoot(file(output + "/model/java").getAbsolutePath());
                 projectHelper.addResource(mavenProject, file(input).getAbsolutePath(), Arrays.asList("model/**/*.ts"), null);
@@ -98,6 +100,14 @@ public class GenerateMojo extends AbstractGenerateMojo {
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Problem running apikana", e);
+        }
+    }
+
+    private void deleteGeneratedClasses() throws IOException {
+        //for some reason, jsonschema2pojo does not generate .java when .class already exists
+        final File outDir = new File(mavenProject.getBuild().getOutputDirectory() + "/" + javaPackage().replace('.', '/'));
+        if (outDir.exists()) {
+            FileUtils.cleanDirectory(outDir);
         }
     }
 
