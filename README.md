@@ -60,7 +60,7 @@ export interface User {
 
 Just simply run `mvn install` and see the documentation at `http://localhost:8333`.
 
-There is a complete [documentation](https://nidi3.github.io/apikana-java/site/plugin-info.html) of the maven plugin.
+There is a complete [documentation](https://nidi3.github.io/apikana-java/site/generate-mojo.html) of the maven plugin.
 
 
 
