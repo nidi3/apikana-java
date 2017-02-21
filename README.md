@@ -62,6 +62,3 @@ Just simply run `mvn install`. This generates pojos from the given typescript mo
 
 There is a complete [documentation](https://nidi3.github.io/apikana-java/site/generate-mojo.html) of the maven plugin.
 
-
-
-

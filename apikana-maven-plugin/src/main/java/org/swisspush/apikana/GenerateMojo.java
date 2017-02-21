@@ -132,7 +132,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
         executeFrontend("npm", configuration(element("arguments", "install")));
     }
 
-    private void runApikana() throws MojoExecutionException {
+    private void runApikana() throws Exception {
         final List<String> cmd = Arrays.asList("apikana start",
                 relative(working(""), file(input)),
                 relative(working(""), file(output)),
@@ -143,13 +143,9 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 "--dependencyPath=" + relative(working(""), apiDependencies("")));
         final String cmdLine = cmd.stream().collect(Collectors.joining(" "));
         if (global) {
-            try {
-                final Process apikana = shellCommand(working(""), cmdLine).inheritIO().start();
-                if (apikana.waitFor() != 0) {
-                    throw new IOException();
-                }
-            } catch (IOException | InterruptedException e) {
-                throw new MojoExecutionException("Could not run apikana", e);
+            final Process apikana = shellCommand(working(""), cmdLine).inheritIO().start();
+            if (apikana.waitFor() != 0) {
+                throw new IOException();
             }
         } else {
             executeFrontend("npm", configuration(element("arguments", "run " + cmdLine)));
