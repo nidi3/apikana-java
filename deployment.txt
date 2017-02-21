@@ -1,2 +1,2 @@
 mvn release:prepare -Pdo-release
-mvn release:perform -Ddo-release
+mvn release:perform -Pdo-release
