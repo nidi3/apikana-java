@@ -26,7 +26,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
         requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GenerateMojo extends AbstractGenerateMojo {
     private static class Version {
-        static final String APIKANA = "0.1.8";
+        static final String APIKANA = "0.1.9";
     }
 
     /**
@@ -70,6 +70,24 @@ public class GenerateMojo extends AbstractGenerateMojo {
      */
     @Parameter(defaultValue = "false", property = "apikana.deploy")
     private boolean deploy;
+
+    /**
+     * The port of the HTTP server.
+     */
+    @Parameter(defaultValue = "8333", property = "apikana.port")
+    private int port;
+
+    /**
+     * If the API should be published via HTTP.
+     */
+    @Parameter(defaultValue = "true", property = "apikana.serve")
+    private boolean serve;
+
+    /**
+     * If the browser should be opened to show the API.
+     */
+    @Parameter(defaultValue = "true", property = "apikana.open-browser")
+    private boolean openBrowser;
 
     /**
      * If the globally installed apikana node package should be used.
@@ -139,6 +157,9 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 global ? "" : "--",
                 "--javaPackage=" + javaPackage(),
                 "--deploy=" + deploy,
+                "--port=" + port,
+                "--serve=" + serve,
+                "--openBrowser=" + openBrowser,
                 "--config=properties.json",
                 "--dependencyPath=" + relative(working(""), apiDependencies("")));
         final String cmdLine = cmd.stream().collect(Collectors.joining(" "));
