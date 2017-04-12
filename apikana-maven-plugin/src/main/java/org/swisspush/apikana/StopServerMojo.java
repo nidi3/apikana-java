@@ -14,7 +14,7 @@ import java.net.URL;
 /**
  * Stop a possibly running HTTP server.
  */
-@Mojo(name = "stopServer", defaultPhase = LifecyclePhase.PRE_CLEAN, requiresProject = false)
+@Mojo(name = "stop-server", defaultPhase = LifecyclePhase.PRE_CLEAN, requiresProject = false)
 public class StopServerMojo extends AbstractMojo {
     /**
      * The port of the HTTP server.
