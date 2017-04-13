@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="Date-Revision-yyyymmdd" content="20170413" />
     <meta http-equiv="Content-Language" content="en" />
-    <title>apikana-maven-plugin &#x2013; Plugin Documentation</title>
+    <title>apikana-maven-plugin &#x2013; apikana:stop-server</title>
     <link rel="stylesheet" href="./css/apache-maven-fluido-1.5.min.css" />
     <link rel="stylesheet" href="./css/site.css" />
     <link rel="stylesheet" href="./css/print.css" media="print" />
@@ -61,20 +61,13 @@
           <span class="icon-chevron-right"></span>
         Project Information</a>
                   </li>
-                                                                            
+                                                                  
       <li>
   
                           <a href="project-reports.html" title="Project Reports">
-          <span class="icon-chevron-down"></span>
+          <span class="icon-chevron-right"></span>
         Project Reports</a>
-                    <ul class="nav nav-list">
-                    
-      <li class="active">
-  
-            <a href="#"><span class="none"></span>Plugin Documentation</a>
-          </li>
-              </ul>
-        </li>
+                  </li>
             </ul>
               
                 
@@ -95,72 +88,76 @@
                 
         <div id="bodyColumn"  class="span10" >
                                   
-            <div class="section">
-<h2><a name="Plugin_Documentation"></a>Plugin Documentation</h2><a name="Plugin_Documentation"></a>
-<p>Goals available for this plugin:</p>
-<table border="0" class="table table-striped">
-<tr class="a">
-<th>Goal</th>
-<th>Description</th></tr>
-<tr class="b">
-<td><a href="generate-mojo.html">apikana:generate</a></td>
-<td>Generate JSON schemas and a user documentation in HTML from the
-given swagger and typescript models.</td></tr>
-<tr class="a">
-<td><a href="help-mojo.html">apikana:help</a></td>
-<td>Display help information on apikana-maven-plugin.<br />
-Call <code>mvn apikana:help -Ddetail=true
--Dgoal=&lt;goal-name&gt;</code> to display parameter details.</td></tr>
-<tr class="b">
-<td><a href="stop-server-mojo.html">apikana:stop-server</a></td>
-<td>Stop a possibly running HTTP server.</td></tr></table>
+            
+  
+    <div class="section">
+<h2><a name="apikana:stop-server"></a>apikana:stop-server</h2>
+      
+<p><b>Full name</b>:</p>
+      
+<p>org.swisspush.maven.plugins:apikana-maven-plugin:0.1.18-SNAPSHOT:stop-server</p>
+      
+<p><b>Description</b>:</p>
+      
+<div>Stop a possibly running HTTP server.</div>
+      
+<p><b>Attributes</b>:</p>
+      
+<ul>
+        
+<li>Binds by default to the <a class="externalLink" href="http://maven.apache.org/ref/current/maven-core/lifecycles.html">lifecycle phase</a>: <tt>pre-clean</tt>.</li>
+      </ul>
+      
 <div class="section">
-<h3><a name="System_Requirements"></a>System Requirements</h3><a name="System_Requirements"></a>
-<p>The following specifies the minimum requirements to run this Maven plugin:</p>
-<table border="0" class="table table-striped">
+<h3><a name="Optional_Parameters"></a>Optional Parameters</h3>
+        
+<table class="table table-striped" border="0">
+          
 <tr class="a">
-<td>Maven</td>
-<td>3.1</td></tr>
+            
+<th>Name</th>
+            
+<th>Type</th>
+            
+<th>Since</th>
+            
+<th>Description</th>
+          </tr>
+          
 <tr class="b">
-<td>JDK</td>
-<td>1.8</td></tr>
-<tr class="a">
-<td>Memory</td>
-<td>No minimum requirement.</td></tr>
-<tr class="b">
-<td>Disk Space</td>
-<td>No minimum requirement.</td></tr></table></div>
+            
+<td><b><a href="#port">port</a></b></td>
+            
+<td><tt>int</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>The port of the HTTP server.<br /><b>Default value is</b>: <tt>8333</tt>.<br /><b>User property is</b>: <tt>apikana.port</tt>.<br /></td>
+          </tr>
+        </table>
+      </div>
+      
 <div class="section">
-<h3><a name="Usage"></a>Usage</h3><a name="Usage"></a>
-<p>You should specify the version in your project's plugin configuration:</p>
-<div class="source"><pre class="prettyprint">&lt;project&gt;
-  ...
-  &lt;build&gt;
-    &lt;!-- To define the plugin version in your parent POM --&gt;
-    &lt;pluginManagement&gt;
-      &lt;plugins&gt;
-        &lt;plugin&gt;
-          &lt;groupId&gt;org.swisspush.maven.plugins&lt;/groupId&gt;
-          &lt;artifactId&gt;apikana-maven-plugin&lt;/artifactId&gt;
-          &lt;version&gt;0.1.18-SNAPSHOT&lt;/version&gt;
-        &lt;/plugin&gt;
-        ...
-      &lt;/plugins&gt;
-    &lt;/pluginManagement&gt;
-    &lt;!-- To use the plugin goals in your POM or parent POM --&gt;
-    &lt;plugins&gt;
-      &lt;plugin&gt;
-        &lt;groupId&gt;org.swisspush.maven.plugins&lt;/groupId&gt;
-        &lt;artifactId&gt;apikana-maven-plugin&lt;/artifactId&gt;
-        &lt;version&gt;0.1.18-SNAPSHOT&lt;/version&gt;
-      &lt;/plugin&gt;
-      ...
-    &lt;/plugins&gt;
-  &lt;/build&gt;
-  ...
-&lt;/project&gt;
-</pre></div>
-<p>For more information, see <a class="externalLink" href="http://maven.apache.org/guides/mini/guide-configuring-plugins.html">&quot;Guide to Configuring Plug-ins&quot;</a></p></div></div>
+<h3><a name="Parameter_Details"></a>Parameter Details</h3>
+        
+<p><b><a name="port">port</a>:</b></p>
+        
+<div>The port of the HTTP server.</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>int</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>apikana.port</tt></li>
+          
+<li><b>Default</b>: <tt>8333</tt></li>
+        </ul>
+      </div>
+    </div>
+  
+
                   </div>
             </div>
           </div>
