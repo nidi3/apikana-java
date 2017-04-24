@@ -22,7 +22,7 @@ If you don't like `npm`, just take advantage of the provided parent pom and use 
     <parent>
         <groupId>org.swisspush.apikana</groupId>
         <artifactId>apikana-parent</artifactId>
-        <version>0.1.16</version>
+        <version>0.1.19</version>
     </parent>
 
     <groupId>myorg.myproject</groupId>
@@ -48,17 +48,25 @@ tsModels:
 
 And create `src/model/ts/user.ts`
 ````ts
+import {Int} from 'apikana/default-types';
+
 export interface User {
-    id: number
+    id: Int
     firstName: string // The given name
     lastName: string // the family name @pattern [A-Z][a-z]*
-    age?: number
+    age?: Int
 }
 ````
 
 ### Create the API documentation
 
-Just simply run `mvn install`. This generates pojos from the given typescript models and a HTML documentation of the API, available at `http://localhost:8333`.
+Running `mvn install` on an API project does the following things:
+
+- create `myapi.jar` containing the typescript models, the generated json schemas and the generated java pojos. 
+- create `myapi-api.jar`, an executable jar file which opens a browser showing the HTML documentation of the API.  
+- start a small HTTP server publishing the HTML documentation of the API at `http://localhost:8333`.
+
+### Plugin documentation
 
 There is a complete [documentation](https://nidi3.github.io/apikana-java/site/plugin-info.html) of the maven plugin.
 
