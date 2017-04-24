@@ -211,7 +211,8 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     }
 
     protected void executeFrontend(String goal, Xpp3Dom config) throws MojoExecutionException {
-        final String rc = new File(".npmrc").exists() ? "--userconfig .npmrc " : "";
+        final File npmrc = file(".npmrc");
+        final String rc = npmrc.exists() ? "--userconfig " + npmrc.getAbsolutePath() + " " : "";
         config.addChild(element("workingDirectory", working("").getAbsolutePath()).toDom());
         final Xpp3Dom arguments = config.getChild("arguments");
         if (arguments != null) {
