@@ -35,7 +35,7 @@ class IoUtils {
             final String path = url.getPath();
             final int jarEnd = path.indexOf(".jar!/");
             if (jarEnd > 0) {
-                addZipToZip(zs, path.substring(6, jarEnd + 4));
+                addZipToZip(zs, path.substring(5, jarEnd + 4));
             }
         }
     }
