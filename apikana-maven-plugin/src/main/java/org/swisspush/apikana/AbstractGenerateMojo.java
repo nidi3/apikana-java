@@ -118,9 +118,7 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
         return new File(mavenProject.getBuild().getDirectory(), name);
     }
 
-    protected File working(String name) {
-        return target("npm/" + name);
-    }
+    protected abstract File working(String name);
 
     protected File apiDependencies(String name) {
         return target("api-dependencies/" + name);

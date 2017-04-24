@@ -30,6 +30,12 @@ public class GenerateMojo extends AbstractGenerateMojo {
     }
 
     /**
+     * The working directory for node.
+     */
+    @Parameter(defaultValue = "target/node", property = "apikana.node-working-dir")
+    private File nodeWorkingDir;
+
+    /**
      * The node version to be used.
      */
     @Parameter(defaultValue = "v7.5.0", property = "apikana.node-version")
@@ -119,6 +125,11 @@ public class GenerateMojo extends AbstractGenerateMojo {
         } catch (Exception e) {
             throw new MojoExecutionException("Problem running apikana", e);
         }
+    }
+
+    @Override
+    protected File working(String name) {
+        return new File(nodeWorkingDir, name);
     }
 
     private void deleteGeneratedClasses() throws IOException {
