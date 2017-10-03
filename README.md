@@ -42,8 +42,9 @@ paths:
           description: ok
           schema:
             $ref: "#/definitions/User"
-tsModels:
-  - ../../model/ts/user.ts
+definitions:
+  $ref:
+    - ../../model/ts/user.ts
 ````
 
 And create `src/model/ts/user.ts`
