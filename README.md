@@ -22,7 +22,7 @@ If you don't like `npm`, just take advantage of the provided parent pom and use 
     <parent>
         <groupId>org.swisspush.apikana</groupId>
         <artifactId>apikana-parent</artifactId>
-        <version>0.1.20</version>
+        <version>0.2.1</version>
     </parent>
 
     <groupId>myorg.myproject</groupId>
@@ -31,7 +31,7 @@ If you don't like `npm`, just take advantage of the provided parent pom and use 
 </project>
 ````
 
-Create `src/rest/openapi/api.yaml`
+Create `src/openapi/api.yaml`
 ````yaml
 paths:
   /sample/users:
@@ -44,10 +44,10 @@ paths:
             $ref: "#/definitions/User"
 definitions:
   $ref:
-    - ../../model/ts/user.ts
+    - ../ts/user.ts
 ````
 
-And create `src/model/ts/user.ts`
+And create `src/ts/user.ts`
 ````ts
 import {Int} from 'apikana/default-types';
 

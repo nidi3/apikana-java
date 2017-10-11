@@ -2,17 +2,14 @@ package org.swisspush.apikana;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.DefaultHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.handler.ShutdownHandler;
-import org.eclipse.jetty.util.FutureCallback;
-import org.eclipse.jetty.util.UrlEncoded;
+import org.eclipse.jetty.server.handler.*;
+import org.eclipse.jetty.util.*;
 import org.eclipse.jetty.util.resource.Resource;
 
 import java.awt.*;
 import java.io.*;
 import java.net.URI;
+import java.nio.file.Path;
 
 public class ApiServer {
     private static final int PORT = 8334;
@@ -35,16 +32,12 @@ public class ApiServer {
 
     private static HandlerList createHandlers() {
         final ResourceHandler uiResource = new ResourceHandler();
-        uiResource.setBaseResource(Resource.newClassPathResource("/ui")); // / -> /ui
-        final ResourceHandler srcResource = new PathResourceHandler("/src"); // /src -> /src
-        srcResource.setBaseResource(Resource.newClassPathResource("/src"));
-        final ResourceHandler targetResource = new PathResourceHandler("/target/model"); // /src -> /src
-        targetResource.setBaseResource(Resource.newClassPathResource("/target/model"));
+        uiResource.setBaseResource(Resource.newClassPathResource("/ui"));
+        final ResourceHandler srcResource = new PathResourceHandler("/sources/a/b/c/d", "/model/openapi");
+        final ShutdownHandler shutdown = new ShutdownHandler("666", true, true);
 
         final HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{
-                uiResource, srcResource, targetResource,
-                new ShutdownHandler("666", true, true), new DefaultHandler()});
+        handlers.setHandlers(new Handler[]{uiResource, srcResource, shutdown, new DefaultHandler()});
         return handlers;
     }
 
@@ -57,18 +50,23 @@ public class ApiServer {
     }
 
     static class PathResourceHandler extends ResourceHandler {
-        private final String prefix;
+        private final Path prefix;
+        private final String target;
+        private final String minimal;
 
-        public PathResourceHandler(String prefix) {
-            this.prefix = prefix;
+        public PathResourceHandler(String prefix, String target) {
+            this.prefix = new File(prefix).toPath();
+            this.target = target;
+            minimal = prefix.substring(0, prefix.indexOf('/', 1) + 1);
         }
 
         @Override
         public Resource getResource(String path) {
-            if (path == null || !path.startsWith(prefix)) {
+            if (path == null || !path.startsWith(minimal)) {
                 return null;
             }
-            return super.getResource(path.substring(prefix.length()));
+            String resource = URIUtil.canonicalPath(target + "/" + prefix.relativize(new File(path).toPath()));
+            return Resource.newClassPathResource(resource);
         }
     }
 }

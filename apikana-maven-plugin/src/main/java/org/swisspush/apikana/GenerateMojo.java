@@ -1,19 +1,16 @@
 package org.swisspush.apikana;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.annotations.*;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
@@ -26,7 +23,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
         requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GenerateMojo extends AbstractGenerateMojo {
     private static class Version {
-        static final String APIKANA = "0.1.11";
+        static final String APIKANA = "0.2.1";
     }
 
     /**
@@ -117,14 +114,22 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 deleteGeneratedClasses();
                 runApikana();
                 mavenProject.addCompileSourceRoot(file(output + "/model/java").getAbsolutePath());
-                projectHelper.addResource(mavenProject, file(input).getAbsolutePath(), Arrays.asList("model/**/*.ts"), null);
-                projectHelper.addResource(mavenProject, file(output).getAbsolutePath(), Arrays.asList("model/**/*.json"), null);
+                addResource(mavenProject, file(input).getAbsolutePath(), "model", Arrays.asList("**/*.ts"));
+                addResource(mavenProject, file(output).getAbsolutePath(), null, Arrays.asList("model/**/*.json"));
 
                 projectHelper.attachArtifact(mavenProject, createApiJar(input, output), "api");
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Problem running apikana", e);
         }
+    }
+
+    private void addResource(MavenProject project, String sourceDir, String targetDir, List<String> includes) {
+        final Resource resource = new Resource();
+        resource.setDirectory(sourceDir);
+        resource.setTargetPath(targetDir);
+        resource.setIncludes(includes);
+        project.addResource(resource);
     }
 
     @Override
