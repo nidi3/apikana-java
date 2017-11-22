@@ -6,15 +6,23 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.*;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.BuildPluginManager;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.*;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.jar.Attributes;
 import java.util.jar.*;
@@ -127,7 +135,7 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
         new ObjectMapper().writeValue(file, propectProps);
     }
 
-    protected File createApiJar(String input, String output) throws IOException {
+    protected File createApiJar(String output) throws IOException {
         final Manifest manifest = new Manifest();
         final Attributes mainAttributes = manifest.getMainAttributes();
         mainAttributes.put(Attributes.Name.MANIFEST_VERSION, "1.0");
@@ -140,9 +148,8 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
             IoUtils.addClassToZip(zs, ApiServer.class);
             IoUtils.addClassToZip(zs, ApiServer.PathResourceHandler.class);
             addJettyToZip(zs);
-            //TODO "/openapi" should be "--api" cli parameter
-            IoUtils.addDirToZip(zs, file(input + "/openapi"), "model/openapi");
-            IoUtils.addDirToZip(zs, target("api/model/ts"), "model/ts");
+            IoUtils.addDirToZip(zs, file(output + "/model/openapi"), "model/openapi");
+            IoUtils.addDirToZip(zs, file(output + "/model/ts"), "model/ts");
             IoUtils.addDirToZip(zs, target("api-dependencies/ts"), "model/ts/node_modules");
         }
         return file;

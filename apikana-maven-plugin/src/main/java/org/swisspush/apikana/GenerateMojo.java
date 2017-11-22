@@ -4,13 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.*;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
@@ -61,6 +66,18 @@ public class GenerateMojo extends AbstractGenerateMojo {
      */
     @Parameter(defaultValue = "target/api", property = "apikana.output")
     private String output;
+
+    /**
+     * The main API file (yaml or json).
+     */
+    @Parameter(defaultValue = "openapi/api.yaml", property = "apikana.api")
+    private String api;
+
+    /**
+     * The directory containing the models. If not given: The directory of the first referenced model in the api.
+     */
+    @Parameter(defaultValue = "", property = "apikana.models")
+    private String models;
 
     /**
      * The java package that should be used.
@@ -114,10 +131,10 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 deleteGeneratedClasses();
                 runApikana();
                 mavenProject.addCompileSourceRoot(file(output + "/model/java").getAbsolutePath());
-                addResource(mavenProject, file(input).getAbsolutePath(), "model", Arrays.asList("**/*.ts"));
-                addResource(mavenProject, file(output).getAbsolutePath(), null, Arrays.asList("model/**/*.json"));
+                addResource(mavenProject, file(output).getAbsolutePath(), null, Arrays.asList(
+                        "model/json-schema-v3/**", "model/json-schema-v4/**", "model/openapi/**", "model/ts/**"));
 
-                projectHelper.attachArtifact(mavenProject, createApiJar(input, output), "api");
+                projectHelper.attachArtifact(mavenProject, createApiJar(output), "api");
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Problem running apikana", e);
@@ -171,6 +188,8 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 relative(working(""), file(input)),
                 relative(working(""), file(output)),
                 global ? "" : "--",
+                "--api=" + api,
+                models != null && models.trim().length() > 0 ? "--models=" + models : "",
                 "--javaPackage=" + javaPackage(),
                 "--deploy=" + deploy,
                 "--port=" + port,
