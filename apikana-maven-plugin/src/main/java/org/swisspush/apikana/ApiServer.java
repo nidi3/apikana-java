@@ -2,20 +2,30 @@ package org.swisspush.apikana;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.*;
-import org.eclipse.jetty.util.*;
+import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.server.handler.ShutdownHandler;
+import org.eclipse.jetty.util.FutureCallback;
+import org.eclipse.jetty.util.URIUtil;
+import org.eclipse.jetty.util.UrlEncoded;
 import org.eclipse.jetty.util.resource.Resource;
 
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.nio.file.Path;
 
 public class ApiServer {
     private static final int PORT = 8334;
+    private static PrintWriter out;
 
     public static void main(String[] args) throws Exception {
-        try (Writer out = new OutputStreamWriter(new FileOutputStream(new File("log.txt")))) {
+        try (PrintWriter w = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File("log.txt"))))) {
+            out = w;
             try {
                 preloadClasses();
 
@@ -25,7 +35,7 @@ public class ApiServer {
                 Desktop.getDesktop().browse(new URI("http://localhost:" + PORT));
                 server.join();
             } catch (Throwable e) {
-                e.printStackTrace(new PrintWriter(out));
+                e.printStackTrace(out);
             }
         }
     }
@@ -65,7 +75,7 @@ public class ApiServer {
             if (path == null || !path.startsWith(minimal)) {
                 return null;
             }
-            String resource = URIUtil.canonicalPath(target + "/" + prefix.relativize(new File(path).toPath()));
+            String resource = URIUtil.canonicalPath(target + "/" + prefix.relativize(new File(path).toPath()).toString().replace('\\', '/'));
             return Resource.newClassPathResource(resource);
         }
     }
