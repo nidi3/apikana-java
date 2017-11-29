@@ -27,6 +27,8 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
         requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GenerateMojo extends AbstractGenerateMojo {
+    private final static String OUTPUT = "target/api";
+
     private static class Version {
         static final String APIKANA = "0.2.3";
     }
@@ -60,12 +62,6 @@ public class GenerateMojo extends AbstractGenerateMojo {
      */
     @Parameter(defaultValue = "", property = "apikana.npm-options")
     private String npmOptions;
-
-    /**
-     * The directory with the generated artifacts.
-     */
-    @Parameter(defaultValue = "target/api", property = "apikana.output")
-    private String output;
 
     /**
      * The main API file (yaml or json).
@@ -136,11 +132,11 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 }
                 deleteGeneratedClasses();
                 runApikana();
-                mavenProject.addCompileSourceRoot(file(output + "/model/java").getAbsolutePath());
-                addResource(mavenProject, file(output).getAbsolutePath(), null, Arrays.asList(
+                mavenProject.addCompileSourceRoot(file(OUTPUT + "/model/java").getAbsolutePath());
+                addResource(mavenProject, file(OUTPUT).getAbsolutePath(), null, Arrays.asList(
                         "model/json-schema-v3/**", "model/json-schema-v4/**", "model/openapi/**", "model/ts/**", "ui/style/**"));
 
-                projectHelper.attachArtifact(mavenProject, createApiJar(output), "api");
+                projectHelper.attachArtifact(mavenProject, createApiJar(OUTPUT), "api");
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Problem running apikana", e);
@@ -205,7 +201,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
     private void runApikana() throws Exception {
         final List<String> cmd = Arrays.asList("apikana start",
                 relative(working(""), file("")),
-                relative(working(""), file(output)),
+                relative(working(""), file(OUTPUT)),
                 global ? "" : "--",
                 "--api=" + api,
                 models != null && models.trim().length() > 0 ? "--models=" + models : "",
