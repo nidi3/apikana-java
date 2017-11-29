@@ -114,7 +114,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
     /**
      * If the globally installed apikana node package should be used.
      */
-    @Parameter(defaultValue = "true", property = "apikana.global")
+    @Parameter(defaultValue = "false", property = "apikana.global")
     private boolean global;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
