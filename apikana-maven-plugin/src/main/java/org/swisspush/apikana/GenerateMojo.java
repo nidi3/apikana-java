@@ -1,21 +1,21 @@
 package org.swisspush.apikana;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarOutputStream;
 import java.util.stream.Collectors;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
@@ -28,7 +28,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
         requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GenerateMojo extends AbstractGenerateMojo {
     private static class Version {
-        static final String APIKANA = "0.2.2";
+        static final String APIKANA = "0.2.3";
     }
 
     /**
@@ -56,10 +56,10 @@ public class GenerateMojo extends AbstractGenerateMojo {
     private String downloadRoot;
 
     /**
-     * The directory with the models and apis.
+     * Options to run npm with. This is used to install apikana and to run apikana.
      */
-    @Parameter(defaultValue = "src", property = "apikana.input")
-    private String input;
+    @Parameter(defaultValue = "", property = "apikana.npm-options")
+    private String npmOptions;
 
     /**
      * The directory with the generated artifacts.
@@ -70,14 +70,20 @@ public class GenerateMojo extends AbstractGenerateMojo {
     /**
      * The main API file (yaml or json).
      */
-    @Parameter(defaultValue = "openapi/api.yaml", property = "apikana.api")
+    @Parameter(defaultValue = "src/openapi/api.yaml", property = "apikana.api")
     private String api;
 
     /**
      * The directory containing the models. If not given: The directory of the first referenced model in the api.
      */
-    @Parameter(defaultValue = "", property = "apikana.models")
+    @Parameter(defaultValue = "src/ts", property = "apikana.models")
     private String models;
+
+    /**
+     * The directory containing css files and images to style the swagger GUI.
+     */
+    @Parameter(defaultValue = "src/style", property = "apikana.style")
+    private String style;
 
     /**
      * The java package that should be used.
@@ -132,7 +138,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 runApikana();
                 mavenProject.addCompileSourceRoot(file(output + "/model/java").getAbsolutePath());
                 addResource(mavenProject, file(output).getAbsolutePath(), null, Arrays.asList(
-                        "model/json-schema-v3/**", "model/json-schema-v4/**", "model/openapi/**", "model/ts/**"));
+                        "model/json-schema-v3/**", "model/json-schema-v4/**", "model/openapi/**", "model/ts/**", "ui/style/**"));
 
                 projectHelper.attachArtifact(mavenProject, createApiJar(output), "api");
             }
@@ -141,12 +147,25 @@ public class GenerateMojo extends AbstractGenerateMojo {
         }
     }
 
-    private void addResource(MavenProject project, String sourceDir, String targetDir, List<String> includes) {
-        final Resource resource = new Resource();
-        resource.setDirectory(sourceDir);
-        resource.setTargetPath(targetDir);
-        resource.setIncludes(includes);
-        project.addResource(resource);
+    protected boolean handlePomPackaging() throws IOException {
+        if ("pom".equals(mavenProject.getPackaging())) {
+            getLog().info("Packaging is pom. Skipping execution.");
+            mavenProject.getProperties().setProperty("jsonschema2pojo.skip", "true");
+            if (file(style).exists()) {
+                projectHelper.attachArtifact(mavenProject, "jar", "style", createStyleJar());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private File createStyleJar() throws IOException {
+        final File file = styleJarFile();
+        file.getParentFile().mkdirs();
+        try (JarOutputStream zs = new JarOutputStream(new FileOutputStream(file))) {
+            IoUtils.addDirToZip(zs, file(style), "ui/style");
+        }
+        return file;
     }
 
     @Override
@@ -180,16 +199,17 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 return;
             }
         }
-        executeFrontend("npm", configuration(element("arguments", "install")));
+        executeFrontend("npm", configuration(element("arguments", npmOptions + " install")));
     }
 
     private void runApikana() throws Exception {
         final List<String> cmd = Arrays.asList("apikana start",
-                relative(working(""), file(input)),
+                relative(working(""), file("")),
                 relative(working(""), file(output)),
                 global ? "" : "--",
                 "--api=" + api,
                 models != null && models.trim().length() > 0 ? "--models=" + models : "",
+                "--style=" + style,
                 "--javaPackage=" + javaPackage(),
                 "--deploy=" + deploy,
                 "--port=" + port,
@@ -204,7 +224,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 throw new IOException();
             }
         } else {
-            executeFrontend("npm", configuration(element("arguments", "run " + cmdLine)));
+            executeFrontend("npm", configuration(element("arguments", npmOptions + " run " + cmdLine)));
         }
     }
 

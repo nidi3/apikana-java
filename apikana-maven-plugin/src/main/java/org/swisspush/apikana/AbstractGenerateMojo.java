@@ -6,6 +6,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -22,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.jar.Attributes;
@@ -48,28 +50,16 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     @Component
     private ProjectBuilder projectBuilder;
 
-    protected boolean handlePomPackaging() throws IOException {
-        if ("pom".equals(mavenProject.getPackaging())) {
-            getLog().info("Packaging is pom. Skipping execution.");
-            mavenProject.getProperties().setProperty("jsonschema2pojo.skip", "true");
-            if (file("src/style").exists()) {
-                projectHelper.attachArtifact(mavenProject, "jar", "style", createStyleJar());
-            }
-            return true;
-        }
-        return false;
-    }
-
     protected void unpackModelDependencies() throws IOException {
         for (final Artifact a : mavenProject.getArtifacts()) {
             final JarFile jar = new JarFile(a.getFile());
             final Enumeration<JarEntry> entries = jar.entries();
             while (entries.hasMoreElements()) {
                 final JarEntry entry = entries.nextElement();
-                copyModel(jar, entry, "ts", a.getArtifactId());
-                copyModel(jar, entry, "json-schema-v3", a.getArtifactId());
-                copyModel(jar, entry, "json-schema-v4", a.getArtifactId());
-                copyModel(jar, entry, "style", "style");
+                copyModel(jar, entry, "model", "ts", a.getArtifactId());
+                copyModel(jar, entry, "model", "json-schema-v3", a.getArtifactId());
+                copyModel(jar, entry, "model", "json-schema-v4", a.getArtifactId());
+                copyModel(jar, entry, "ui", "style", "");
             }
         }
     }
@@ -85,15 +75,15 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
                 final Enumeration<JarEntry> entries = jar.entries();
                 while (entries.hasMoreElements()) {
                     final JarEntry entry = entries.nextElement();
-                    copyModel(jar, entry, "style", "");
+                    copyModel(jar, entry, "ui", "style", "");
                 }
             }
             unpackStyleDependencies(project.getParent());
         }
     }
 
-    private void copyModel(JarFile jar, JarEntry entry, String type, String targetDir) throws IOException {
-        final String sourceName = "model/" + type;
+    private void copyModel(JarFile jar, JarEntry entry, String basePath, String type, String targetDir) throws IOException {
+        final String sourceName = basePath + "/" + type;
         if (!entry.isDirectory() && entry.getName().startsWith(sourceName)) {
             final File modelFile = apiDependencies(type + "/" + targetDir + entry.getName().substring((sourceName).length()));
             modelFile.getParentFile().mkdirs();
@@ -159,16 +149,7 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
         return target(mavenProject.getArtifactId() + "-" + mavenProject.getVersion() + "-api.jar");
     }
 
-    private File createStyleJar() throws IOException {
-        final File file = styleJarFile();
-        file.getParentFile().mkdirs();
-        try (JarOutputStream zs = new JarOutputStream(new FileOutputStream(file))) {
-            IoUtils.addDirToZip(zs, file("src/style"), "model/style");
-        }
-        return file;
-    }
-
-    private File styleJarFile() {
+    protected File styleJarFile() {
         return target(mavenProject.getArtifactId() + "-" + mavenProject.getVersion() + "-style.jar");
     }
 
@@ -199,6 +180,14 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
                     "- Set <global>false</false> in this plugin's <configuration> or\n" +
                     "- Install node (https://docs.npmjs.com/getting-started/installing-node)");
         }
+    }
+
+    protected void addResource(MavenProject project, String sourceDir, String targetDir, List<String> includes) {
+        final Resource resource = new Resource();
+        resource.setDirectory(sourceDir);
+        resource.setTargetPath(targetDir);
+        resource.setIncludes(includes);
+        project.addResource(resource);
     }
 
     protected ProcessBuilder shellCommand(File workDir, String cmd) {
