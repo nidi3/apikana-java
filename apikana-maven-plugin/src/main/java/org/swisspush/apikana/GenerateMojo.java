@@ -70,7 +70,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
     private String api;
 
     /**
-     * The directory containing the models. If not given: The directory of the first referenced model in the api.
+     * The directory containing the models, if no API file is given.
      */
     @Parameter(defaultValue = "src/ts", property = "apikana.models")
     private String models;
