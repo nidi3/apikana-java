@@ -24,13 +24,13 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
 /**
  * Generate JSON schemas and a user documentation in HTML from the given swagger and typescript models.
  */
-@Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
+@Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
         requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GenerateMojo extends AbstractGenerateMojo {
     private final static String OUTPUT = "target/api";
 
     private static class Version {
-        static final String APIKANA = "0.2.3";
+        static final String APIKANA = "0.3.2";
     }
 
     /**
@@ -133,14 +133,19 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 deleteGeneratedClasses();
                 runApikana();
                 mavenProject.addCompileSourceRoot(file(OUTPUT + "/model/java").getAbsolutePath());
-                addResource(mavenProject, file(OUTPUT).getAbsolutePath(), null, Arrays.asList(
-                        "model/json-schema-v3/**", "model/json-schema-v4/**", "model/openapi/**", "model/ts/**", "ui/style/**"));
-
+                addResources();
                 projectHelper.attachArtifact(mavenProject, createApiJar(OUTPUT), "api");
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Problem running apikana", e);
         }
+    }
+
+    private void addResources() {
+        addResource(mavenProject, file(OUTPUT).getAbsolutePath(), null, Arrays.asList(
+                "model/json-schema-v3/**", "model/json-schema-v4/**", "model/openapi/**", "model/ts/**", "ui/style/**"));
+        addResource(mavenProject, file(OUTPUT + "/model/java").getAbsolutePath(), null, Arrays.asList("**"));
+        addResource(mavenProject, file("target/java-gen").getAbsolutePath(), null, Arrays.asList("**"));
     }
 
     protected boolean handlePomPackaging() throws IOException {
@@ -195,16 +200,16 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 return;
             }
         }
-        executeFrontend("npm", configuration(element("arguments", npmOptions + " install")));
+        executeFrontend("npm", configuration(element("arguments", npmOptions() + "install")));
     }
 
     private void runApikana() throws Exception {
         final List<String> cmd = Arrays.asList("apikana start",
                 relative(working(""), file("")),
-                relative(working(""), file(OUTPUT)),
                 global ? "" : "--",
                 "--api=" + api,
                 models != null && models.trim().length() > 0 ? "--models=" + models : "",
+                "--target=" + relative(working(""), file(OUTPUT)),
                 "--style=" + style,
                 "--javaPackage=" + javaPackage(),
                 "--deploy=" + deploy,
@@ -220,8 +225,18 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 throw new IOException();
             }
         } else {
-            executeFrontend("npm", configuration(element("arguments", npmOptions + " run " + cmdLine)));
+            executeFrontend("npm", configuration(element("arguments", npmOptions() + "run " + cmdLine)));
         }
+    }
+
+    private String npmOptions() throws MojoExecutionException {
+        if (npmOptions == null || npmOptions.trim().length() == 0) {
+            return "";
+        }
+        if (!npmOptions.startsWith("--")) {
+            throw new MojoExecutionException("npmOptions must start with --");
+        }
+        return npmOptions.trim() + " ";
     }
 
     private String javaPackage() {
