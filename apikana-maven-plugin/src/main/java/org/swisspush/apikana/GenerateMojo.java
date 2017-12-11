@@ -30,7 +30,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
     private final static String OUTPUT = "target/api";
 
     private static class Version {
-        static final String APIKANA = "0.3.2";
+        static final String APIKANA = "0.3.3";
     }
 
     /**
