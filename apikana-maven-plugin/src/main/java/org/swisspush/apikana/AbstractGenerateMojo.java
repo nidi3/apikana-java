@@ -15,23 +15,23 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.project.ProjectBuilder;
+import org.apache.maven.project.artifact.ProjectArtifact;
 import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
-import java.util.jar.Attributes;
-import java.util.jar.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
 public abstract class AbstractGenerateMojo extends AbstractMojo {
+    protected final static String OUTPUT = "target/api";
+
     @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject mavenProject;
 
@@ -50,40 +50,63 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     @Component
     private ProjectBuilder projectBuilder;
 
+    /**
+     * The working directory for node.
+     */
+    @Parameter(defaultValue = "target/node", property = "apikana.node-working-dir")
+    protected File nodeWorkingDir;
+
+    /**
+     * The directory containing css files and images to style the swagger GUI.
+     */
+    @Parameter(defaultValue = "src/style", property = "apikana.style")
+    protected String style;
+
     protected void unpackModelDependencies() throws IOException {
         for (final Artifact a : mavenProject.getArtifacts()) {
-            final JarFile jar = new JarFile(a.getFile());
-            final Enumeration<JarEntry> entries = jar.entries();
-            while (entries.hasMoreElements()) {
-                final JarEntry entry = entries.nextElement();
-                copyModel(jar, entry, "model", "ts", a.getArtifactId());
-                copyModel(jar, entry, "model", "json-schema-v3", a.getArtifactId());
-                copyModel(jar, entry, "model", "json-schema-v4", a.getArtifactId());
-                copyModel(jar, entry, "ui", "style", "");
+            JarFile jar = classifiedArtifactJar(a, "sources");
+            if (jar != null) {
+                final Enumeration<JarEntry> entries = jar.entries();
+                while (entries.hasMoreElements()) {
+                    final JarEntry entry = entries.nextElement();
+                    copyModel(jar, entry, "", "ts", a.getArtifactId());
+                    copyModel(jar, entry, "", "json-schema-v3", a.getArtifactId());
+                    copyModel(jar, entry, "", "json-schema-v4", a.getArtifactId());
+                    copyModel(jar, entry, "", "style", "");
+                }
             }
         }
     }
 
     protected void unpackStyleDependencies(MavenProject project) throws IOException {
         if (project != null) {
-            final ArtifactResolutionRequest req = new ArtifactResolutionRequest();
-            req.setArtifact(repositorySystem.createArtifactWithClassifier(project.getGroupId(), project.getArtifactId(), project.getVersion(), "jar", "style"));
-            final ArtifactResolutionResult result = repositorySystem.resolve(req);
-            if (!result.getArtifacts().isEmpty()) {
-                final Artifact artifact = result.getArtifacts().iterator().next();
-                final JarFile jar = new JarFile(artifact.getFile());
+            JarFile jar = classifiedArtifactJar(new ProjectArtifact(project), "style");
+            if (jar != null) {
                 final Enumeration<JarEntry> entries = jar.entries();
                 while (entries.hasMoreElements()) {
                     final JarEntry entry = entries.nextElement();
-                    copyModel(jar, entry, "ui", "style", "");
+                    copyModel(jar, entry, "", "style", "");
                 }
             }
             unpackStyleDependencies(project.getParent());
         }
     }
 
+    private JarFile classifiedArtifactJar(Artifact a, String classifier) throws IOException {
+        Artifact artifact = classifiedArtifact(a, classifier);
+        return artifact == null ? null : new JarFile(artifact.getFile());
+    }
+
+    private Artifact classifiedArtifact(Artifact a, String classifier) {
+        final ArtifactResolutionRequest req = new ArtifactResolutionRequest();
+        req.setArtifact(repositorySystem.createArtifactWithClassifier(a.getGroupId(), a.getArtifactId(), a.getVersion(), "jar", classifier));
+        final ArtifactResolutionResult result = repositorySystem.resolve(req);
+        final Iterator<Artifact> iter = result.getArtifacts().iterator();
+        return iter.hasNext() ? iter.next() : null;
+    }
+
     private void copyModel(JarFile jar, JarEntry entry, String basePath, String type, String targetDir) throws IOException {
-        final String sourceName = basePath + "/" + type;
+        final String sourceName = (basePath.length() > 0 ? basePath + "/" : "") + type;
         if (!entry.isDirectory() && entry.getName().startsWith(sourceName)) {
             final File modelFile = apiDependencies(type + "/" + targetDir + entry.getName().substring((sourceName).length()));
             modelFile.getParentFile().mkdirs();
@@ -104,11 +127,13 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
         return new File(mavenProject.getBasedir(), name);
     }
 
-    private File target(String name) {
+    protected File target(String name) {
         return new File(mavenProject.getBuild().getDirectory(), name);
     }
 
-    protected abstract File working(String name);
+    protected File working(String name) {
+        return new File(nodeWorkingDir, name);
+    }
 
     protected File apiDependencies(String name) {
         return target("api-dependencies/" + name);
@@ -125,37 +150,8 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
         new ObjectMapper().writeValue(file, propectProps);
     }
 
-    protected File createApiJar(String output) throws IOException {
-        final Manifest manifest = new Manifest();
-        final Attributes mainAttributes = manifest.getMainAttributes();
-        mainAttributes.put(Attributes.Name.MANIFEST_VERSION, "1.0");
-        mainAttributes.put(Attributes.Name.MAIN_CLASS, ApiServer.class.getName());
-        final File file = apiJarFile();
-        try (JarOutputStream zs = new JarOutputStream(new FileOutputStream(file), manifest)) {
-            IoUtils.addDirToZip(zs, file(output + "/model/json-schema-v3"), "model/json-schema-v3");
-            IoUtils.addDirToZip(zs, file(output + "/model/json-schema-v4"), "model/json-schema-v4");
-            IoUtils.addDirToZip(zs, file(output + "/ui"), "ui");
-            IoUtils.addClassToZip(zs, ApiServer.class);
-            IoUtils.addClassToZip(zs, ApiServer.PathResourceHandler.class);
-            addJettyToZip(zs);
-            IoUtils.addDirToZip(zs, file(output + "/model/openapi"), "model/openapi");
-            IoUtils.addDirToZip(zs, file(output + "/model/ts"), "model/ts");
-            IoUtils.addDirToZip(zs, target("api-dependencies/ts"), "model/ts/node_modules");
-        }
-        return file;
-    }
-
-    private File apiJarFile() {
-        return target(mavenProject.getArtifactId() + "-" + mavenProject.getVersion() + "-api.jar");
-    }
-
-    protected File styleJarFile() {
-        return target(mavenProject.getArtifactId() + "-" + mavenProject.getVersion() + "-style.jar");
-    }
-
-    private void addJettyToZip(JarOutputStream zs) throws IOException {
-        IoUtils.addZipsToZip(zs, "org/eclipse/jetty");
-        IoUtils.addZipsToZip(zs, "javax/servlet");
+    protected boolean isPom() {
+        return "pom".equals(mavenProject.getPackaging());
     }
 
     protected void generatePackageJson(String version) throws IOException {

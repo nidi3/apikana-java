@@ -57,7 +57,7 @@ class IoUtils {
 
 
     public static void addDirToZip(ZipOutputStream zs, File source, String target) throws IOException {
-        if (!source.exists()){
+        if (!source.exists()) {
             return;
         }
 
@@ -73,15 +73,17 @@ class IoUtils {
 
         final Path sourcePath = source.toPath();
         Files.walk(sourcePath).forEach(path -> {
-            final String name = target + "/" + sourcePath.relativize(path).toString().replace('\\', '/');
-            try {
-                if (Files.isDirectory(path)) {
-                    addDirEntryToZip(zs, name);
-                } else {
-                    addResourceToZip(zs, name, Files.newInputStream(path));
+            final String name = (target.length() > 0 ? target + "/" : "") + sourcePath.relativize(path).toString().replace('\\', '/');
+            if (name.length() > 0) {
+                try {
+                    if (Files.isDirectory(path)) {
+                        addDirEntryToZip(zs, name);
+                    } else {
+                        addResourceToZip(zs, name, Files.newInputStream(path));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         });
     }

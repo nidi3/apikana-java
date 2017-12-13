@@ -10,12 +10,10 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.JarOutputStream;
 import java.util.stream.Collectors;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
@@ -27,17 +25,9 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
         requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GenerateMojo extends AbstractGenerateMojo {
-    private final static String OUTPUT = "target/api";
-
     private static class Version {
         static final String APIKANA = "0.3.3";
     }
-
-    /**
-     * The working directory for node.
-     */
-    @Parameter(defaultValue = "target/node", property = "apikana.node-working-dir")
-    private File nodeWorkingDir;
 
     /**
      * The node version to be used.
@@ -74,12 +64,6 @@ public class GenerateMojo extends AbstractGenerateMojo {
      */
     @Parameter(defaultValue = "src/ts", property = "apikana.models")
     private String models;
-
-    /**
-     * The directory containing css files and images to style the swagger GUI.
-     */
-    @Parameter(defaultValue = "src/style", property = "apikana.style")
-    private String style;
 
     /**
      * The java package that should be used.
@@ -119,7 +103,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
-            if (!handlePomPackaging()) {
+            if (!isPom()) {
                 unpackStyleDependencies(mavenProject.getParent());
                 unpackModelDependencies();
                 writeProjectProps();
@@ -133,45 +117,10 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 deleteGeneratedClasses();
                 runApikana();
                 mavenProject.addCompileSourceRoot(file(OUTPUT + "/model/java").getAbsolutePath());
-                addResources();
-                projectHelper.attachArtifact(mavenProject, createApiJar(OUTPUT), "api");
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Problem running apikana", e);
         }
-    }
-
-    private void addResources() {
-        addResource(mavenProject, file(OUTPUT).getAbsolutePath(), null, Arrays.asList(
-                "model/json-schema-v3/**", "model/json-schema-v4/**", "model/openapi/**", "model/ts/**", "ui/style/**"));
-        addResource(mavenProject, file(OUTPUT + "/model/java").getAbsolutePath(), null, Arrays.asList("**"));
-        addResource(mavenProject, file("target/java-gen").getAbsolutePath(), null, Arrays.asList("**"));
-    }
-
-    protected boolean handlePomPackaging() throws IOException {
-        if ("pom".equals(mavenProject.getPackaging())) {
-            getLog().info("Packaging is pom. Skipping execution.");
-            mavenProject.getProperties().setProperty("jsonschema2pojo.skip", "true");
-            if (file(style).exists()) {
-                projectHelper.attachArtifact(mavenProject, "jar", "style", createStyleJar());
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private File createStyleJar() throws IOException {
-        final File file = styleJarFile();
-        file.getParentFile().mkdirs();
-        try (JarOutputStream zs = new JarOutputStream(new FileOutputStream(file))) {
-            IoUtils.addDirToZip(zs, file(style), "ui/style");
-        }
-        return file;
-    }
-
-    @Override
-    protected File working(String name) {
-        return new File(nodeWorkingDir, name);
     }
 
     private void deleteGeneratedClasses() throws IOException {
