@@ -54,7 +54,7 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
      * The working directory for node.
      */
     @Parameter(defaultValue = "target/node", property = "apikana.node-working-dir")
-    protected File nodeWorkingDir;
+    private File nodeWorkingDir;
 
     /**
      * The directory containing css files and images to style the swagger GUI.

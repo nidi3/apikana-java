@@ -1,8 +1,6 @@
 package org.swisspush.apikana;
 
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -22,7 +20,7 @@ public class StopServerMojo extends AbstractMojo {
     @Parameter(defaultValue = "8333", property = "apikana.port")
     private int port;
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() {
         try {
             final URL url = new URL("http://127.0.0.1:" + port + "/close");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();

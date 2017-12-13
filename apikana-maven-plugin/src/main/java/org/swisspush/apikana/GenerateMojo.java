@@ -2,7 +2,6 @@ package org.swisspush.apikana;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -101,7 +100,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
     @Parameter(defaultValue = "false", property = "apikana.global")
     private boolean global;
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         try {
             if (!isPom()) {
                 unpackStyleDependencies(mavenProject.getParent());

@@ -22,7 +22,7 @@ If you don't like `npm`, just take advantage of the provided parent pom and use 
     <parent>
         <groupId>org.swisspush.apikana</groupId>
         <artifactId>apikana-parent</artifactId>
-        <version>0.3.3</version>
+        <version>0.3.4</version>
     </parent>
 
     <groupId>myorg.myproject</groupId>

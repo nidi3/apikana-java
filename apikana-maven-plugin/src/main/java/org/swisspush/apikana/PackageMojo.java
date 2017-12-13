@@ -1,27 +1,15 @@
 package org.swisspush.apikana;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-import java.util.stream.Collectors;
-
-import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
 
 /**
  * Package the generated files in sources-jar, api-jar and style-jar.
@@ -29,27 +17,21 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
 @Mojo(name = "package", defaultPhase = LifecyclePhase.PACKAGE)
 public class PackageMojo extends AbstractGenerateMojo {
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         try {
-            if (!handlePomPackaging()) {
+            if (isPom()) {
+                getLog().info("Packaging is pom. Skipping execution.");
+                mavenProject.getProperties().setProperty("jsonschema2pojo.skip", "true");
+                if (file(style).exists()) {
+                    projectHelper.attachArtifact(mavenProject, "jar", "style", createStyleJar());
+                }
+            } else {
                 projectHelper.attachArtifact(mavenProject, createApiJar(OUTPUT), "api");
                 projectHelper.attachArtifact(mavenProject, createSourcesJar(OUTPUT), "sources");
             }
         } catch (Exception e) {
-            throw new MojoExecutionException("Problem running apikana", e);
+            throw new MojoExecutionException("Problem packaging APIs", e);
         }
-    }
-
-    protected boolean handlePomPackaging() throws IOException {
-        if (isPom()) {
-            getLog().info("Packaging is pom. Skipping execution.");
-            mavenProject.getProperties().setProperty("jsonschema2pojo.skip", "true");
-            if (file(style).exists()) {
-                projectHelper.attachArtifact(mavenProject, "jar", "style", createStyleJar());
-            }
-            return true;
-        }
-        return false;
     }
 
     private File createApiJar(String output) throws IOException {

@@ -40,7 +40,7 @@ class IoUtils {
         }
     }
 
-    public static void addZipToZip(ZipOutputStream zs, String zip) throws IOException {
+    private static void addZipToZip(ZipOutputStream zs, String zip) throws IOException {
         try (final ZipFile file = new ZipFile(new File(zip))) {
             final Enumeration<? extends ZipEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
@@ -92,7 +92,7 @@ class IoUtils {
         addResourceToZip(zs, dir + (dir.endsWith("/") ? "" : "/"), null);
     }
 
-    public static void addResourceToZip(ZipOutputStream zs, String name, InputStream in) throws IOException {
+    private static void addResourceToZip(ZipOutputStream zs, String name, InputStream in) throws IOException {
         final ZipEntry zipEntry = new ZipEntry(name);
         try {
             zs.putNextEntry(zipEntry);
