@@ -102,7 +102,10 @@ public class GenerateMojo extends AbstractGenerateMojo {
 
     public void execute() throws MojoExecutionException {
         try {
-            if (!isPom()) {
+            if (isPom()) {
+                getLog().info("Packaging is pom. Skipping generation.");
+                mavenProject.getProperties().setProperty("jsonschema2pojo.skip", "true");
+            } else {
                 unpackStyleDependencies(mavenProject.getParent());
                 unpackModelDependencies();
                 writeProjectProps();

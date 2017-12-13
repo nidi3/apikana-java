@@ -20,8 +20,6 @@ public class PackageMojo extends AbstractGenerateMojo {
     public void execute() throws MojoExecutionException {
         try {
             if (isPom()) {
-                getLog().info("Packaging is pom. Skipping execution.");
-                mavenProject.getProperties().setProperty("jsonschema2pojo.skip", "true");
                 if (file(style).exists()) {
                     projectHelper.attachArtifact(mavenProject, "jar", "style", createStyleJar());
                 }
