@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="Date-Revision-yyyymmdd" content="20171213" />
     <meta http-equiv="Content-Language" content="en" />
-    <title>apikana-maven-plugin &#x2013; About</title>
+    <title>apikana-maven-plugin &#x2013; apikana:package</title>
     <link rel="stylesheet" href="./css/apache-maven-fluido-1.5.min.css" />
     <link rel="stylesheet" href="./css/site.css" />
     <link rel="stylesheet" href="./css/print.css" media="print" />
@@ -54,83 +54,13 @@
               
                 <ul class="nav nav-list">
                     <li class="nav-header">Project Documentation</li>
-                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                  
       <li>
   
                           <a href="project-info.html" title="Project Information">
-          <span class="icon-chevron-down"></span>
+          <span class="icon-chevron-right"></span>
         Project Information</a>
-                    <ul class="nav nav-list">
-                    
-      <li>
-  
-                          <a href="dependencies.html" title="Dependencies">
-          <span class="none"></span>
-        Dependencies</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="dependency-info.html" title="Dependency Information">
-          <span class="none"></span>
-        Dependency Information</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="distribution-management.html" title="Distribution Management">
-          <span class="none"></span>
-        Distribution Management</a>
-            </li>
-                    
-      <li class="active">
-  
-            <a href="#"><span class="none"></span>About</a>
-          </li>
-                    
-      <li>
-  
-                          <a href="license.html" title="Licenses">
-          <span class="none"></span>
-        Licenses</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="plugin-management.html" title="Plugin Management">
-          <span class="none"></span>
-        Plugin Management</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="plugins.html" title="Plugins">
-          <span class="none"></span>
-        Plugins</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="team-list.html" title="Team">
-          <span class="none"></span>
-        Team</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="source-repository.html" title="Source Code Management">
-          <span class="none"></span>
-        Source Code Management</a>
-            </li>
-                    
-      <li>
-  
-                          <a href="project-summary.html" title="Summary">
-          <span class="none"></span>
-        Summary</a>
-            </li>
-              </ul>
-        </li>
+                  </li>
                                                                   
       <li>
   
@@ -158,9 +88,105 @@
                 
         <div id="bodyColumn"  class="span10" >
                                   
-            <div class="section">
-<h2><a name="About_apikana-maven-plugin"></a>About apikana-maven-plugin</h2><a name="About_apikana-maven-plugin"></a>
-<p>A maven plugin for apikana.</p></div>
+            
+  
+    <div class="section">
+<h2><a name="apikana:package"></a>apikana:package</h2>
+      
+<p><b>Full name</b>:</p>
+      
+<p>org.swisspush.maven.plugins:apikana-maven-plugin:0.3.4:package</p>
+      
+<p><b>Description</b>:</p>
+      
+<div>Package the generated files in sources-jar, api-jar and style-jar.</div>
+      
+<p><b>Attributes</b>:</p>
+      
+<ul>
+        
+<li>Requires a Maven project to be executed.</li>
+        
+<li>Binds by default to the <a class="externalLink" href="http://maven.apache.org/ref/current/maven-core/lifecycles.html">lifecycle phase</a>: <tt>package</tt>.</li>
+      </ul>
+      
+<div class="section">
+<h3><a name="Optional_Parameters"></a>Optional Parameters</h3>
+        
+<table class="table table-striped" border="0">
+          
+<tr class="a">
+            
+<th>Name</th>
+            
+<th>Type</th>
+            
+<th>Since</th>
+            
+<th>Description</th>
+          </tr>
+          
+<tr class="b">
+            
+<td><b><a href="#nodeWorkingDir">nodeWorkingDir</a></b></td>
+            
+<td><tt>File</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>The working directory for node.<br /><b>Default value is</b>: <tt>target/node</tt>.<br /><b>User property is</b>: <tt>apikana.node-working-dir</tt>.<br /></td>
+          </tr>
+          
+<tr class="a">
+            
+<td><b><a href="#style">style</a></b></td>
+            
+<td><tt>String</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>The directory containing css files and images to style the swagger
+GUI.<br /><b>Default value is</b>: <tt>src/style</tt>.<br /><b>User property is</b>: <tt>apikana.style</tt>.<br /></td>
+          </tr>
+        </table>
+      </div>
+      
+<div class="section">
+<h3><a name="Parameter_Details"></a>Parameter Details</h3>
+        
+<p><b><a name="nodeWorkingDir">nodeWorkingDir</a>:</b></p>
+        
+<div>The working directory for node.</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>java.io.File</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>apikana.node-working-dir</tt></li>
+          
+<li><b>Default</b>: <tt>target/node</tt></li>
+        </ul><hr />
+<p><b><a name="style">style</a>:</b></p>
+        
+<div>The directory containing css files and images to style the swagger
+GUI.</div>
+        
+<ul>
+          
+<li><b>Type</b>: <tt>java.lang.String</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
+          
+<li><b>User Property</b>: <tt>apikana.style</tt></li>
+          
+<li><b>Default</b>: <tt>src/style</tt></li>
+        </ul>
+      </div>
+    </div>
+  
+
                   </div>
             </div>
           </div>
