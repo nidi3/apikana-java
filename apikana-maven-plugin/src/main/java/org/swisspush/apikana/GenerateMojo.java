@@ -168,7 +168,8 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 "--serve=" + serve,
                 "--openBrowser=" + openBrowser,
                 "--config=properties.json",
-                "--dependencyPath=" + relative(working(""), apiDependencies("")));
+                "--dependencyPath=" + relative(working(""), apiDependencies("")),
+                "--minVersion=" + Version.APIKANA);
         final String cmdLine = cmd.stream().collect(Collectors.joining(" "));
         if (global) {
             final Process apikana = shellCommand(working(""), cmdLine).inheritIO().start();
