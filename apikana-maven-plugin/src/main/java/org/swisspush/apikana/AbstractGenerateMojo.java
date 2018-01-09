@@ -178,14 +178,6 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
         }
     }
 
-    protected void addResource(MavenProject project, String sourceDir, String targetDir, List<String> includes) {
-        final Resource resource = new Resource();
-        resource.setDirectory(sourceDir);
-        resource.setTargetPath(targetDir);
-        resource.setIncludes(includes);
-        project.addResource(resource);
-    }
-
     protected ProcessBuilder shellCommand(File workDir, String cmd) {
         getLog().info("Workdir: " + workDir);
         getLog().info("Executing: " + cmd);
