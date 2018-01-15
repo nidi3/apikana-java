@@ -25,7 +25,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
         requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GenerateMojo extends AbstractApikanaMojo {
     private static class Version {
-        static final String APIKANA = "0.3.8";
+        static final String APIKANA = "0.3.9";
     }
 
     /**
