@@ -29,7 +29,7 @@ import java.util.jar.JarFile;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
-public abstract class AbstractGenerateMojo extends AbstractMojo {
+public abstract class AbstractApikanaMojo extends AbstractMojo {
     protected final static String OUTPUT = "target/api";
 
     @Parameter(defaultValue = "${project}", readonly = true)

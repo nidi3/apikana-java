@@ -23,7 +23,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
  */
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
         requiresDependencyResolution = ResolutionScope.COMPILE)
-public class GenerateMojo extends AbstractGenerateMojo {
+public class GenerateMojo extends AbstractApikanaMojo {
     private static class Version {
         static final String APIKANA = "0.3.8";
     }

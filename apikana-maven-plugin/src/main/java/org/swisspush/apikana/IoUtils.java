@@ -92,7 +92,7 @@ class IoUtils {
         addResourceToZip(zs, dir + (dir.endsWith("/") ? "" : "/"), null);
     }
 
-    private static void addResourceToZip(ZipOutputStream zs, String name, InputStream in) throws IOException {
+    public static void addResourceToZip(ZipOutputStream zs, String name, InputStream in) throws IOException {
         final ZipEntry zipEntry = new ZipEntry(name);
         try {
             zs.putNextEntry(zipEntry);
