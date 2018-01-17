@@ -2,17 +2,12 @@ package org.swisspush.apikana;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.annotations.*;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
@@ -24,10 +19,6 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
         requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GenerateMojo extends AbstractApikanaMojo {
-    private static class Version {
-        static final String APIKANA = "0.3.9";
-    }
-
     /**
      * The node version to be used.
      */
@@ -51,6 +42,12 @@ public class GenerateMojo extends AbstractApikanaMojo {
      */
     @Parameter(defaultValue = "", property = "apikana.npm-options")
     private String npmOptions;
+
+    /**
+     * The apikana npm version to be used.
+     */
+    @Parameter(defaultValue = "0.3.10", property = "apikana.version")
+    private String apikanaVersion;
 
     /**
      * The main API file (yaml or json).
@@ -113,7 +110,7 @@ public class GenerateMojo extends AbstractApikanaMojo {
                     checkNodeInstalled();
                 } else {
                     installNode();
-                    generatePackageJson(Version.APIKANA);
+                    generatePackageJson(apikanaVersion);
                     installApikana();
                 }
                 deleteGeneratedClasses();
@@ -146,8 +143,8 @@ public class GenerateMojo extends AbstractApikanaMojo {
         if (apikanaPackage.exists()) {
             Map pack = new ObjectMapper().readValue(apikanaPackage, Map.class);
             final String version = (String) pack.get("version");
-            if (Version.APIKANA.equals(version)) {
-                getLog().info("apikana " + Version.APIKANA + " already installed.");
+            if (apikanaVersion.equals(version)) {
+                getLog().info("apikana " + apikanaVersion + " already installed.");
                 return;
             }
         }
@@ -169,7 +166,7 @@ public class GenerateMojo extends AbstractApikanaMojo {
                 "--openBrowser=" + openBrowser,
                 "--config=properties.json",
                 "--dependencyPath=" + relative(working(""), apiDependencies("")),
-                "--minVersion=" + Version.APIKANA);
+                "--minVersion=" + apikanaVersion);
         final String cmdLine = cmd.stream().collect(Collectors.joining(" "));
         if (global) {
             final Process apikana = shellCommand(working(""), cmdLine).inheritIO().start();
