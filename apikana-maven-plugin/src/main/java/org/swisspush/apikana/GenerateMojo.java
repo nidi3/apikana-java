@@ -46,7 +46,7 @@ public class GenerateMojo extends AbstractApikanaMojo {
     /**
      * The apikana npm version to be used.
      */
-    @Parameter(defaultValue = "0.3.12", property = "apikana.version")
+    @Parameter(defaultValue = "0.3.13", property = "apikana.version")
     private String apikanaVersion;
 
     /**
