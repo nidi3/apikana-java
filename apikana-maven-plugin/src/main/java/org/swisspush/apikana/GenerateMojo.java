@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.*;
 import org.codehaus.plexus.util.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +21,8 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
         requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GenerateMojo extends AbstractApikanaMojo {
+    private static final Logger LOG = LoggerFactory.getLogger(GenerateMojo.class);
+
     /**
      * The node version to be used.
      */
@@ -46,7 +50,7 @@ public class GenerateMojo extends AbstractApikanaMojo {
     /**
      * The apikana npm version to be used.
      */
-    @Parameter(defaultValue = "0.3.13", property = "apikana.version")
+    @Parameter(defaultValue = "0.3.14", property = "apikana.version")
     private String apikanaVersion;
 
     /**
@@ -166,7 +170,8 @@ public class GenerateMojo extends AbstractApikanaMojo {
                 "--openBrowser=" + openBrowser,
                 "--config=properties.json",
                 "--dependencyPath=" + relative(working(""), apiDependencies("")),
-                "--minVersion=" + apikanaVersion);
+                "--minVersion=" + apikanaVersion,
+                "--log=" + logLevel());
         final String cmdLine = cmd.stream().collect(Collectors.joining(" "));
         if (global) {
             final Process apikana = shellCommand(working(""), cmdLine).inheritIO().start();
@@ -176,6 +181,19 @@ public class GenerateMojo extends AbstractApikanaMojo {
         } else {
             executeFrontend("npm", configuration(element("arguments", npmOptions() + "run " + cmdLine)));
         }
+    }
+
+    private String logLevel() {
+        if (LOG.isDebugEnabled() || LOG.isTraceEnabled()) {
+            return "debug";
+        }
+        if (LOG.isInfoEnabled()) {
+            return "info";
+        }
+        if (LOG.isWarnEnabled()) {
+            return "warn";
+        }
+        return "error";
     }
 
     private String npmOptions() throws MojoExecutionException {
