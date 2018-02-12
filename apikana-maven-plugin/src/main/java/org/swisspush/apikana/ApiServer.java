@@ -1,21 +1,25 @@
 package org.swisspush.apikana;
 
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.DefaultHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.handler.ShutdownHandler;
+import org.eclipse.jetty.server.handler.*;
 import org.eclipse.jetty.util.FutureCallback;
 import org.eclipse.jetty.util.UrlEncoded;
 import org.eclipse.jetty.util.resource.Resource;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class ApiServer {
     private static final int PORT = 8334;
@@ -39,11 +43,12 @@ public class ApiServer {
     }
 
     private static HandlerList createHandlers() {
-        final ResourceHandler resource = new RootResourceHandler();
-        final ShutdownHandler shutdown = new ShutdownHandler("666", true, true);
-
         final HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{resource, shutdown, new DefaultHandler()});
+        handlers.setHandlers(new Handler[]{
+                new SourcesHandler(),
+                new RootResourceHandler(),
+                new ShutdownHandler("666", true, true),
+                new DefaultHandler()});
         return handlers;
     }
 
@@ -58,13 +63,66 @@ public class ApiServer {
     static class RootResourceHandler extends ResourceHandler {
         @Override
         public Resource getResource(String path) {
-            if (path == null || !path.startsWith("/")) {
-                return null;
+            return path == null || !path.startsWith("/") ? null : Resource.newClassPathResource(path);
+        }
+    }
+
+    static class SourcesHandler extends AbstractHandler {
+        @Override
+        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+            if (baseRequest.isHandled()) {
+                return;
             }
-            if (path.length() == 1) {
-                path = "/index.html";
+            out.println(target);
+            out.flush();
+            if (target.length() == 1) {
+                response.sendRedirect("/ui/index.html?url=" + (hasApi() ? "/model/openapi/api.yaml" : "/model"));
+                out.flush();
+                baseRequest.setHandled(true);
             }
-            return Resource.newClassPathResource(path);
+
+            if ("/model".equals(target)) {
+                List<String> sources = sources(getClass().getResource("/model/ts"));
+                response.getWriter().println("{definitions: {$ref: " + sources + "}}");
+                response.flushBuffer();
+                baseRequest.setHandled(true);
+            }
+        }
+
+        private boolean hasApi() throws IOException {
+            String me = getClass().getClassLoader().getResource("META-INF").getFile();
+            me = me.substring(0, me.length() - "META-INF".length());
+            out.println(me);
+            Enumeration<URL> resources = getClass().getClassLoader().getResources("/model/openapi/api.yaml");
+            while (resources.hasMoreElements()) {
+                URL url = resources.nextElement();
+                if (url.getFile().startsWith(me)){
+                    out.println(url.getFile());
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private List<String> sources(URL url) throws IOException {
+            String file = url.getFile();
+            if (!file.startsWith("file:/")) {
+                throw new RuntimeException("Expected to run inside jar.");
+            }
+            List<String> res = new ArrayList<>();
+            int sep = file.indexOf("!");
+            try (JarFile jar = new JarFile(file.substring(5, sep))) {
+                String path = file.substring(sep + 2).replace("\\", "/");
+                Enumeration<JarEntry> entries = jar.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    String name = entry.getName();
+                    if (!entry.isDirectory() && name.startsWith(path) && !name.contains("/node_modules/")) {
+                        res.add(name);
+                    }
+                }
+                return res;
+            }
         }
     }
 }
