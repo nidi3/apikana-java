@@ -1,8 +1,6 @@
 package org.swisspush.apikana;
 
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.*;
 import org.eclipse.jetty.util.FutureCallback;
 import org.eclipse.jetty.util.UrlEncoded;
@@ -15,8 +13,7 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -73,38 +70,28 @@ public class ApiServer {
             if (baseRequest.isHandled()) {
                 return;
             }
-            out.println(target);
-            out.flush();
+
             if (target.length() == 1) {
                 response.sendRedirect("/ui/index.html?url=" + (hasApi() ? "/model/openapi/api.yaml" : "/model"));
-                out.flush();
                 baseRequest.setHandled(true);
             }
 
             if ("/model".equals(target)) {
-                List<String> sources = sources(getClass().getResource("/model/ts"));
+                List<String> sources = sources(getClass().getClassLoader().getResource("model/ts"));
                 response.getWriter().println("{definitions: {$ref: " + sources + "}}");
                 response.flushBuffer();
                 baseRequest.setHandled(true);
             }
         }
 
-        private boolean hasApi() throws IOException {
-            String me = getClass().getClassLoader().getResource("META-INF").getFile();
-            me = me.substring(0, me.length() - "META-INF".length());
-            out.println(me);
-            Enumeration<URL> resources = getClass().getClassLoader().getResources("/model/openapi/api.yaml");
-            while (resources.hasMoreElements()) {
-                URL url = resources.nextElement();
-                if (url.getFile().startsWith(me)){
-                    out.println(url.getFile());
-                    return true;
-                }
-            }
-            return false;
+        private boolean hasApi() {
+            return getClass().getClassLoader().getResource("model/openapi/api.yaml") != null;
         }
 
         private List<String> sources(URL url) throws IOException {
+            if (url == null) {
+                return new ArrayList<>();
+            }
             String file = url.getFile();
             if (!file.startsWith("file:/")) {
                 throw new RuntimeException("Expected to run inside jar.");
