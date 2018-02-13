@@ -100,6 +100,7 @@ public abstract class AbstractApikanaMojo extends AbstractMojo {
     private Artifact classifiedArtifact(Artifact a, String classifier) {
         final ArtifactResolutionRequest req = new ArtifactResolutionRequest();
         req.setArtifact(repositorySystem.createArtifactWithClassifier(a.getGroupId(), a.getArtifactId(), a.getVersion(), "jar", classifier));
+        req.setRemoteRepositories(mavenProject.getRemoteArtifactRepositories());
         final ArtifactResolutionResult result = repositorySystem.resolve(req);
         final Iterator<Artifact> iter = result.getArtifacts().iterator();
         return iter.hasNext() ? iter.next() : null;
