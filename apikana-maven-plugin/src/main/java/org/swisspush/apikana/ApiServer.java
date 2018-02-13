@@ -42,7 +42,6 @@ public class ApiServer {
     private static HandlerList createHandlers() {
         final HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[]{
-                new SourcesHandler(),
                 new RootResourceHandler(),
                 new ShutdownHandler("666", true, true),
                 new DefaultHandler()});
@@ -60,56 +59,13 @@ public class ApiServer {
     static class RootResourceHandler extends ResourceHandler {
         @Override
         public Resource getResource(String path) {
-            return path == null || !path.startsWith("/") ? null : Resource.newClassPathResource(path);
-        }
-    }
-
-    static class SourcesHandler extends AbstractHandler {
-        @Override
-        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-            if (baseRequest.isHandled()) {
-                return;
+            if (path == null || !path.startsWith("/")) {
+                return null;
             }
-
-            if (target.length() == 1) {
-                response.sendRedirect("/ui/index.html?url=" + (hasApi() ? "/model/openapi/api.yaml" : "/model"));
-                baseRequest.setHandled(true);
+            if (path.length() == 1) {
+                path = "/index.html";
             }
-
-            if ("/model".equals(target)) {
-                List<String> sources = sources(getClass().getClassLoader().getResource("model/ts"));
-                response.getWriter().println("{definitions: {$ref: " + sources + "}}");
-                response.flushBuffer();
-                baseRequest.setHandled(true);
-            }
-        }
-
-        private boolean hasApi() {
-            return getClass().getClassLoader().getResource("model/openapi/api.yaml") != null;
-        }
-
-        private List<String> sources(URL url) throws IOException {
-            if (url == null) {
-                return new ArrayList<>();
-            }
-            String file = url.getFile();
-            if (!file.startsWith("file:/")) {
-                throw new RuntimeException("Expected to run inside jar.");
-            }
-            List<String> res = new ArrayList<>();
-            int sep = file.indexOf("!");
-            try (JarFile jar = new JarFile(file.substring(5, sep))) {
-                String path = file.substring(sep + 2).replace("\\", "/");
-                Enumeration<JarEntry> entries = jar.entries();
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
-                    String name = entry.getName();
-                    if (!entry.isDirectory() && name.startsWith(path) && !name.contains("/node_modules/")) {
-                        res.add(name);
-                    }
-                }
-                return res;
-            }
+            return Resource.newClassPathResource(path);
         }
     }
 }
