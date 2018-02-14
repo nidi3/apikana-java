@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
 
@@ -50,7 +51,7 @@ public class GenerateMojo extends AbstractApikanaMojo {
     /**
      * The apikana npm version to be used.
      */
-    @Parameter(defaultValue = "0.4.7", property = "apikana.version")
+    @Parameter(defaultValue = "0.4.8", property = "apikana.version")
     private String apikanaVersion;
 
     /**
@@ -70,6 +71,13 @@ public class GenerateMojo extends AbstractApikanaMojo {
      */
     @Parameter(property = "apikana.java-package")
     private String javaPackage;
+
+    /**
+     * The path prefix to be used in the generated *Paths.java file.
+     * If the property is not set or "null", the maximum possible path prefix is used.
+     */
+    @Parameter(property = "apikana.path-prefix")
+    private String pathPrefix;
 
     /**
      * If the sources should be copied into the output directory.
@@ -156,7 +164,7 @@ public class GenerateMojo extends AbstractApikanaMojo {
     }
 
     private void runApikana() throws Exception {
-        final List<String> cmd = Arrays.asList("apikana start",
+        final List<String> cmd = new ArrayList<>(asList("apikana start",
                 relative(working(""), file("")),
                 global ? "" : "--",
                 "--api=" + api,
@@ -171,7 +179,10 @@ public class GenerateMojo extends AbstractApikanaMojo {
                 "--config=properties.json",
                 "--dependencyPath=" + relative(working(""), apiDependencies("")),
                 "--minVersion=" + apikanaVersion,
-                "--log=" + logLevel());
+                "--log=" + logLevel()));
+        if (pathPrefix != null && !"null".equals(pathPrefix)) {
+            cmd.add("--pathPrefix=" + pathPrefix);
+        }
         final String cmdLine = cmd.stream().collect(Collectors.joining(" "));
         if (global) {
             final Process apikana = shellCommand(working(""), cmdLine).inheritIO().start();
