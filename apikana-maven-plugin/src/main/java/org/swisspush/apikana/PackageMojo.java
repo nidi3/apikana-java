@@ -52,7 +52,7 @@ public class PackageMojo extends AbstractApikanaMojo {
             addDirToZip(zs, file(output + "/model/openapi"), "model/openapi");
             addDirToZip(zs, file(output + "/model/ts"), "model/ts");
             addDirToZip(zs, target("api-dependencies/ts"), "model/ts/node_modules");
-            final String index = "<!DOCTYPE html><html><head><meta http-equiv='refresh' content='0; url=ui/index.html?url=/model/openapi/api.yaml'></head></html>";
+            final String index = "<!DOCTYPE html><html><head><meta http-equiv='refresh' content='0; url=ui/index.html?url=../model/openapi/api.yaml'></head></html>";
             addResourceToZip(zs, "index.html", new ByteArrayInputStream(index.getBytes(StandardCharsets.UTF_8)));
         }
         return file;
