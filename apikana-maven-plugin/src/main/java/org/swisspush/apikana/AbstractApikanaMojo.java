@@ -158,7 +158,6 @@ public abstract class AbstractApikanaMojo extends AbstractMojo {
     protected void generatePackageJson(String version) throws IOException {
         updateJson(working("package.json"), pack -> {
             pack.put("name", mavenProject.getArtifactId());
-            pack.put("version", mavenProject.getVersion());
             final Map<String, String> scripts = (Map) pack.merge("scripts", new HashMap<>(), (oldVal, newVal) -> oldVal);
             scripts.put("apikana", "apikana");
             final Map<String, String> devDependencies = (Map) pack.merge("devDependencies", new HashMap<>(), (oldVal, newVal) -> oldVal);
