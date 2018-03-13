@@ -70,4 +70,3 @@ Running `mvn install` on an API project does the following things:
 ### Plugin documentation
 
 There is a complete [documentation](https://nidi3.github.io/apikana-java/site/plugin-info.html) of the maven plugin.
-
