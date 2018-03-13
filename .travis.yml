@@ -2,5 +2,5 @@ language: java
 jdk:
   - oraclejdk8
 sudo: false
-deploy:
-  - if [ "$TRAVIS_BRANCH" = "master" ]; then deploy.sh; fi
+script:
+  - if [ "$TRAVIS_BRANCH" = "master" ]; then deploy.sh; else build.sh; fi
