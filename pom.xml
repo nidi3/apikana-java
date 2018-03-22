@@ -78,6 +78,7 @@
                             <autoVersionSubmodules>true</autoVersionSubmodules>
                             <checkModificationExcludeList>workspace.xml</checkModificationExcludeList>
                             <releaseProfiles>do-release</releaseProfiles>
+                            <arguments>-Dgpg.passphrase=${env.GPG_PASSPHRASE}</arguments>
                         </configuration>
                     </plugin>
                     <plugin>
