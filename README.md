@@ -71,3 +71,8 @@ Running `mvn install` on an API project does the following things:
 
 There is a complete [documentation](https://nidi3.github.io/apikana-java/site/plugin-info.html) of the maven plugin.
 
+### Development
+The development is done in the `develop` branch.
+Releasing is done by defining the release version in `release.sh` and by rebasing the develop branch onto the master branch.
+[Travis CI](https://travis-ci.org) will then pick this up and perform the release.
+  
