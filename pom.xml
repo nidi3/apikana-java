@@ -57,7 +57,7 @@
                     <version>1.6.7</version>
                     <extensions>true</extensions>
                     <configuration>
-                        <serverId>ossrh</serverId>
+                        <serverId>sonatype-nexus-staging</serverId>
                         <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                         <autoReleaseAfterClose>true</autoReleaseAfterClose>
                     </configuration>
@@ -78,7 +78,6 @@
                             <autoVersionSubmodules>true</autoVersionSubmodules>
                             <checkModificationExcludeList>workspace.xml</checkModificationExcludeList>
                             <releaseProfiles>do-release</releaseProfiles>
-                            <arguments>-Dgpg.passphrase=${env.GPG_PASSPHRASE}</arguments>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -91,6 +90,10 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <homedir>${session.executionRootDirectory}</homedir>
+                                    <keyname>230584D7</keyname>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
