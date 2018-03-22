@@ -1,5 +1,6 @@
 echo "releasing..."
 
+git checkout ${TRAVIS_BRANCH}
 git config --global user.email "swisspush@post.ch"
 git config --global user.name "Travis-CI"
 git config credential.helper "store --file=.git/credentials"
