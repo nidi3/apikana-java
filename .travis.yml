@@ -3,4 +3,5 @@ jdk:
   - oraclejdk8
 sudo: false
 after_success:
+  - set -e
   - if [ "$TRAVIS_BRANCH" = "master" ]; then bash ./release.sh; fi
