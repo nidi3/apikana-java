@@ -10,5 +10,9 @@
             <id>gpg.passphrase</id>
             <passphrase>${env.CI_PGP_PASSWORD}</passphrase>
         </server>
+        <server>
+            <id>github</id>
+            <password>${env.GH_TOKEN2}</password>
+        </server>
     </servers>
 </settings>
