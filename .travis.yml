@@ -4,4 +4,6 @@ jdk:
 sudo: false
 after_success:
   - set -e
+  - echo "$TRAVIS_COMMIT"
+  - echo "$TRAVIS_COMMIT_MESSAGE"
   - if [ "$TRAVIS_BRANCH" = "master" ]; then bash ./release.sh; fi
