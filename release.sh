@@ -1,9 +1,12 @@
+echo "Releasing..."
 git checkout ${TRAVIS_BRANCH}
-git config user.email "swisspush@post.ch"
-git config user.name "Travis-CI"
-git config credential.helper "store --file=.git/credentials"
-echo "https://${GH_TOKEN2}:@github.com" > .git/credentials
+git config --global user.email "swisspush@post.ch"
+git config --global user.name "Travis-CI"
+git config --global credential.helper "store --file=.git/credentials"
+echo https://${GH_TOKEN}:@github.com > .git/credentials
 
-mvn --settings settings.xml -B release:prepare -Pdo-release -DreleaseVersion=0.4.15 -DdevelopmentVersion=0.4.16-SNAPSHOT
+echo "Preparing maven release..."
+mvn --settings settings.xml -B release:prepare -Pdo-release -DreleaseVersion=0.4.17 -DdevelopmentVersion=0.4.18-SNAPSHOT
+
+echo "Performing maven release..."
 mvn --settings settings.xml release:perform -Pdo-release
-

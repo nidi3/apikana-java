@@ -12,8 +12,7 @@
         </server>
         <server>
             <id>github</id>
-            <password>${env.GH_TOKEN2}</password>
+            <password>${env.GH_TOKEN}</password>
         </server>
     </servers>
 </settings>
-
