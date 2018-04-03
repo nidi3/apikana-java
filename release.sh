@@ -10,3 +10,4 @@ mvn --settings settings.xml -B release:prepare -Pdo-release -DreleaseVersion=0.4
 
 echo "Performing maven release..."
 mvn --settings settings.xml release:perform -Pdo-release
+
