@@ -5,4 +5,4 @@ sudo: false
 after_success:
   - set -e
   - echo "$TRAVIS_COMMIT_MESSAGE"
-  - if [[ "$TRAVIS_BRANCH" = "master" && "$TRAVIS_COMMIT_MESSAGE" != [maven-release-plugin]* ]]; then bash ./release.sh; fi
+  - if [[ "$TRAVIS_BRANCH" = "master" && "$TRAVIS_COMMIT_MESSAGE" != \[maven-release-plugin\]* ]]; then bash ./release.sh; fi
