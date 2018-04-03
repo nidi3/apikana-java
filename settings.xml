@@ -14,9 +14,5 @@
             <id>github</id>
             <password>${env.GH_TOKEN}</password>
         </server>
-        <server>
-            <id>github2</id>
-            <username>${env.GH_TOKEN}</username>
-        </server>
     </servers>
 </settings>
