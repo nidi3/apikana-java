@@ -73,6 +73,12 @@ public class GenerateMojo extends AbstractApikanaMojo {
     private String javaPackage;
 
     /**
+     * Param {@code --useLeadingSlashes} for apikana.
+     */
+    @Parameter(property = "apikana.use-leading-slashes")
+    private String useLeadingSlashes;
+
+    /**
      * The path prefix to be used in the generated *Paths.java file.
      * If the property is not set or "null", the maximum possible path prefix is used.
      */
@@ -172,6 +178,7 @@ public class GenerateMojo extends AbstractApikanaMojo {
                 "--target=" + relative(working(""), file(OUTPUT)),
                 "--style=" + style,
                 "--javaPackage=" + javaPackage(),
+                "--useLeadingSlashes=" + useLeadingSlashes(),
                 "--deploy=" + deploy,
                 "--port=" + port,
                 "--serve=" + serve,
@@ -192,6 +199,10 @@ public class GenerateMojo extends AbstractApikanaMojo {
         } else {
             executeFrontend("npm", configuration(element("arguments", npmOptions() + "run " + cmdLine)));
         }
+    }
+
+    private boolean useLeadingSlashes() {
+        return !"false".equals(useLeadingSlashes);
     }
 
     private String logLevel() {
