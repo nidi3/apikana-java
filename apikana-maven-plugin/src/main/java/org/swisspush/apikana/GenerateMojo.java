@@ -25,6 +25,12 @@ public class GenerateMojo extends AbstractApikanaMojo {
     private static final Logger LOG = LoggerFactory.getLogger(GenerateMojo.class);
 
     /**
+     * {@code --basePath} parameter for apikana.
+     */
+    @Parameter( property="apikana.base-path" )
+    private String basePath;
+
+    /**
      * The node version to be used.
      */
     @Parameter(defaultValue = "v7.5.0", property = "apikana.node-version")
@@ -71,12 +77,6 @@ public class GenerateMojo extends AbstractApikanaMojo {
      */
     @Parameter(property = "apikana.java-package")
     private String javaPackage;
-
-    /**
-     * Param {@code --useLeadingSlashes} for apikana.
-     */
-    @Parameter(property = "apikana.use-leading-slashes")
-    private String useLeadingSlashes;
 
     /**
      * The path prefix to be used in the generated *Paths.java file.
@@ -178,7 +178,6 @@ public class GenerateMojo extends AbstractApikanaMojo {
                 "--target=" + relative(working(""), file(OUTPUT)),
                 "--style=" + style,
                 "--javaPackage=" + javaPackage(),
-                "--useLeadingSlashes=" + useLeadingSlashes(),
                 "--deploy=" + deploy,
                 "--port=" + port,
                 "--serve=" + serve,
@@ -190,6 +189,9 @@ public class GenerateMojo extends AbstractApikanaMojo {
         if (pathPrefix != null && !"null".equals(pathPrefix)) {
             cmd.add("--pathPrefix=" + pathPrefix);
         }
+        if( basePath != null && !"null".equals(basePath) ){
+            cmd.add( "--basePath="+ basePath );
+        }
         final String cmdLine = cmd.stream().collect(Collectors.joining(" "));
         if (global) {
             final Process apikana = shellCommand(working(""), cmdLine).inheritIO().start();
@@ -199,10 +201,6 @@ public class GenerateMojo extends AbstractApikanaMojo {
         } else {
             executeFrontend("npm", configuration(element("arguments", npmOptions() + "run " + cmdLine)));
         }
-    }
-
-    private boolean useLeadingSlashes() {
-        return !"false".equals(useLeadingSlashes);
     }
 
     private String logLevel() {
