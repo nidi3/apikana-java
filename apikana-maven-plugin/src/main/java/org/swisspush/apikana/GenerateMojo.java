@@ -25,6 +25,12 @@ public class GenerateMojo extends AbstractApikanaMojo {
     private static final Logger LOG = LoggerFactory.getLogger(GenerateMojo.class);
 
     /**
+     * {@code --basePath} parameter for apikana.
+     */
+    @Parameter( property="apikana.base-path" )
+    private String basePath;
+
+    /**
      * The node version to be used.
      */
     @Parameter(defaultValue = "v7.5.0", property = "apikana.node-version")
@@ -182,6 +188,9 @@ public class GenerateMojo extends AbstractApikanaMojo {
                 "--log=" + logLevel()));
         if (pathPrefix != null && !"null".equals(pathPrefix)) {
             cmd.add("--pathPrefix=" + pathPrefix);
+        }
+        if( basePath != null && !"null".equals(basePath) ){
+            cmd.add( "--basePath="+ basePath );
         }
         final String cmdLine = cmd.stream().collect(Collectors.joining(" "));
         if (global) {
