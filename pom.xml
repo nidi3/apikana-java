@@ -4,7 +4,7 @@
 
     <groupId>org.swisspush.apikana</groupId>
     <artifactId>apikana</artifactId>
-    <version>0.4.19-SNAPSHOT</version>
+    <version>0.4.19</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
@@ -25,7 +25,7 @@
         <connection>scm:git:https://github.com/swisspush/apikana-java.git</connection>
         <developerConnection>scm:git:https://github.com/swisspush/apikana-java.git</developerConnection>
         <url>https://github.com/swisspush/apikana-java</url>
-      <tag>HEAD</tag>
+      <tag>apikana-0.4.19</tag>
   </scm>
 
     <licenses>
