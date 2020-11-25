@@ -62,6 +62,22 @@ public abstract class AbstractApikanaMojo extends AbstractMojo {
     @Parameter(defaultValue = "src/style", property = "apikana.style")
     protected String style;
 
+    /**
+     * <p>Override the API version</p>
+     *
+     * <p>Default: project.version</p>
+     */
+    @Parameter(defaultValue = "${project.version}", property = "apikana.apiversion")
+    protected String apiVersion;
+
+    /**
+     * <p>Override apikana defaults</p>
+     *
+     * <p>Default: 0.0.0</p>
+     */
+    @Parameter(defaultValue = "0.0.0", property = "apikana.defaults.version")
+    protected String apikanaDefaultsVersion;
+
     protected void unpackModelDependencies() throws IOException {
         for (final Artifact a : mavenProject.getArtifacts()) {
             JarFile jar = classifiedArtifactJar(a, "sources");
@@ -158,10 +174,18 @@ public abstract class AbstractApikanaMojo extends AbstractMojo {
     protected void generatePackageJson(String version) throws IOException {
         updateJson(working("package.json"), pack -> {
             pack.put("name", mavenProject.getArtifactId());
+            pack.put("version", apiVersion);
             final Map<String, String> scripts = (Map) pack.merge("scripts", new HashMap<>(), (oldVal, newVal) -> oldVal);
             scripts.put("apikana", "apikana");
             final Map<String, String> devDependencies = (Map) pack.merge("devDependencies", new HashMap<>(), (oldVal, newVal) -> oldVal);
+            final Map<String,List<String>> customConfig = (Map) pack.merge("customConfig", new HashMap<>(), (oldVal, newVal) -> oldVal);
+            final List<String> plugins = new ArrayList<>();
+            plugins.add("maven");
+            plugins.add("readme");
+            customConfig.put("plugins", plugins);
+            pack.put("customConfig", customConfig);
             devDependencies.put("apikana", version);
+            devDependencies.put("apikana-defaults", apikanaDefaultsVersion);
         });
     }
 
